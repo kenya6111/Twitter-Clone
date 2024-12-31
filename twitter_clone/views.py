@@ -17,6 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist
 # from allauth.account.views import LoginView
 # from allauth.account.forms import LoginForm
 # from .forms import SignupForm
+import re
 
 # ヘルパー関数
 def get_user_from_session(request):
@@ -39,43 +40,59 @@ def send_verification_email(user,code):
     ]
     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
+def is_valid_email(email):
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(regex, email))
+
+# 使用例
+def is_valid_phone_number(phone_number):
+    phone_number_pattern = r"^0[789]0\d{8}$"
+    return bool(re.match(phone_number_pattern, phone_number))
 
 def signup_view(request):
     request.session.clear()
     if request.method == 'POST':
-        name = request.POST.get("name", None)
-        email = request.POST.get("mail", None)
-        tel = request.POST.get("tel", None)
-        day = request.POST.get("day", None)
-        month = request.POST.get("month", None)
-        year = request.POST.get("year", None)
+        try:
+            name = request.POST.get("name", None)
+            email = request.POST.get("mail", None)
+            tel = request.POST.get("tel", None)
+            day = request.POST.get("day", None)
+            month = request.POST.get("month", None)
+            year = request.POST.get("year", None)
 
-        dt = None
-        if all([day,month,year]):
-            dt = datetime.strptime(year+month + day, '%Y%m%d')
+            if not is_valid_email(email):
+                messages.error(request, "メールアドレスの値が不正です。")
+                raise Exception()
+            if not is_valid_phone_number(tel):
+                messages.error(request, "電話番号の値が不正です。")
+                raise Exception()
 
-        # 認証するまでログイン不可
-        custom_user = CustomUser.objects.create()
-        custom_user.username = name
-        custom_user.email = email
-        custom_user.tel = tel
-        custom_user.date_of_birth = dt
-        custom_user.is_active = False
-        custom_user.save()
+            dt = None
+            if all([day,month,year]):
+                dt = datetime.strptime(year+month + day, '%Y%m%d')
 
-        # 認証コードを生成
-        authenticate_code= str(random.randint(100000,999999))
-        email_verification = EmailVerificationModel(user=custom_user, code=authenticate_code)
-        email_verification.save()
+            # 認証するまでログイン不可
+            custom_user = CustomUser.objects.create()
+            custom_user.username = name
+            custom_user.email = email
+            custom_user.tel = tel
+            custom_user.date_of_birth = dt
+            custom_user.is_active = False
+            custom_user.save()
 
-        # 認証コード付きメールを送信
-        send_verification_email(custom_user, authenticate_code)
+            # 認証コードを生成
+            authenticate_code= str(random.randint(100000,999999))
+            email_verification = EmailVerificationModel(user=custom_user, code=authenticate_code)
+            email_verification.save()
 
+            # 認証コード付きメールを送信
+            send_verification_email(custom_user, authenticate_code)
+            request.session['user_id'] = custom_user.id
 
-        request.session['user_id'] = custom_user.id
+            return redirect('email_verify')
 
-        return redirect('email_verify')
-
+        except Exception:
+            return render(request,'account/signup.html')
     return render(request, 'account/signup.html')
 
 
@@ -123,9 +140,17 @@ def password_input_view(request):
 def login_view(request):
     if request.method == 'POST':
         try:
-            username = request.POST.get("name", None)
+            tel_email_name = request.POST.get("tel_email_name", None)
             password = request.POST.get("password", None)
-            custom_user = CustomUser.objects.get(username=username,password=password)
+
+            custom_user = None
+            if is_valid_email(tel_email_name):
+                custom_user = CustomUser.objects.get(email=tel_email_name,password=password)
+            elif is_valid_phone_number(tel_email_name):
+                custom_user = CustomUser.objects.get(tel=tel_email_name,password=password)
+            else:
+                custom_user = CustomUser.objects.get(username=tel_email_name,password=password)
+
             if not custom_user.is_active:
                 raise Exception("無効なユーザです。")
             request.session['user_id'] = custom_user.id

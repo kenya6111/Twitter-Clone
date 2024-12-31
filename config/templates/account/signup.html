@@ -77,6 +77,13 @@
             </div>
             <button class="btn rounded-5 d-block w-100 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">次へ</button>
         </form>
+        
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">{{ message }}
+                </div>
+            {% endfor %}
+            {% endif %}
     </div>
 </div>
 {% endblock %}
