@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% sass_src 'css/top.scss' %}" />
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+ログインユーザ: id:{{ login_user.id }}  
+name:{{ login_user.username }}
+<a href="{% url 'account_logout' %}" class="btn btn-primary rounded-5 fw-bold " tabindex="-1" role="button" aria-disabled="true">ログアウト</a>
+<div class="w-100 h-100 bg-top-parent">
+    <div class="row h-100">
+        <div class="col-3 bg-success">
+        </div>
+        <div class="col-5 bg-info">
+        </div>
+        <div class="col-4 bg-primary">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/signup.js' %}"></script>
+{% endblock %}

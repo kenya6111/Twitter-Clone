@@ -1,3 +1,14 @@
-Django==4.2.5
+Django==4.2.16
 django-environ==0.11.2
 psycopg==3.1.12
+django-allauth==65.3.0
+django-sass-processor==1.4.1
+django-compressor==4.5.1
+libsass==0.23.0
+django-widget-tweaks==1.5.0
+flake8==7.1.1
+gunicorn==23.0.0
+dj-database-url==2.3.0
+django-heroku==0.3.1
+psycopg2==2.9.10
+whitenoise==6.8.2

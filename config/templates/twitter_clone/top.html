@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% sass_src 'css/top.scss' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="w-100 d-flex align-items-center h-100 bg-top-parent">
+    <div class="w-45  h-75 d-flex justify-content-center align-items-center">
+        <!-- Xの画像を表示 -->
+        <img src="{% static 'logo/logo-white.png' %}" class="w-45 " alt="My image">
+    </div>
+    <div class="w-55 h-75 mw-test">
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success w-75" role="alert">{{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}
+        <div class="px">
+            <h1 class="text-white fw-bold fs-title1 mb-5">すべての話題が、ここ<br>に。</h1>
+            <h3 class="text-white fw-bold fs-title2 mb-5">今すぐ参加しましょう。</h3>
+            <div class="mw-btn">
+                <div>
+                    <a href="#" class="btn btn-primary rounded-5 fw-bold bg-white border-gray text-gray w-65 mb-1" tabindex="-1" role="button" >健也でログイン</a>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-primary rounded-5 fw-bold bg-white border-gray text-black w-65" tabindex="-1" role="button">Githubでログイン</a>
+                </div>
+                <div class="w-65 text-line">
+                    <p class="text-white mataha">または</p>
+                </div>
+                <div class="mb-5">
+                    <a href="{% url 'signup' %}" class="btn btn-primary rounded-5 fw-bold w-65 bg-light-primary d-flex align-items-center justify-content-center mb-2" style="height:2.8rem; " tabindex="-1" role="button" aria-disabled="true">
+                            アカウントを作成
+                    </a>
+                    <p class="text-gray fs-privacy">アカウントを登録することにより、<span class="text-light-primary">利用規約</span>と<span class="text-light-primary">プライバシー<br>ポリシー（Cookieの使用</span>を含む）に同意したとみなされます。</p>
+                </div>
+                <div>
+                    <p class="text-white fw-bold">アカウントをお持ちの場合</p>
+                    <a href="{% url 'account_login' %}" class="btn btn-primary rounded-5 bg-black text-light-primary fw-bold border-gray w-65 d-flex align-items-center justify-content-center" style="height:2.8rem; " tabindex="-1" role="button" aria-disabled="true">ログイン</a>
+                </div>
+            </div>
+        </div>
+        <!-- アカウント登録、ログインボタンなど表示 -->
+
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
