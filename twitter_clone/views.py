@@ -33,7 +33,9 @@ def signup_view(request):
         month = request.POST.get("month", None)
         year = request.POST.get("year", None)
 
-        dt = datetime.strptime(year+month + day, '%Y%m%d')
+        dt = None
+        if day and day is not None and month and month is not None and year and year is not None:
+            dt = datetime.strptime(year+month + day, '%Y%m%d')
 
         # 認証するまでログイン不可
         custom_user = CustomUser.objects.create()
@@ -49,7 +51,7 @@ def signup_view(request):
         email_verification = EmailVerificationModel(user=custom_user, code=authenticate_code)
         email_verification.save()
 
-        email = "kenyanke6111@gmail.com"# TODO 画面入力のメアドを入れる
+        email = "kenyanke6111@gmail.com"
         """題名"""
         subject = f"Xの認証コードは{authenticate_code}です"
         """本文"""
