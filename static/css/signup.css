@@ -27,7 +27,6 @@ input:not(:placeholder-shown) + .floating-label {
     top: 0px;
     left: 3px;
     font-size: 0.9rem;
-    /* color: rgb(173, 216, 230); */
 }
 .form-floating > .form-control:not(:placeholder-shown) ~ label::after,
 .form-floating > .form-control:focus ~ label::after {
@@ -49,6 +48,5 @@ transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
 }
 input:-webkit-autofill {
     transition: background-color 10000s ease-in-out 0s;
-    /* color:#fff !important;*/
     -webkit-text-fill-color: white !important;
 }

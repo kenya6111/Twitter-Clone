@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded',function(){
     for(let i =1;i<=12;i++){
         const newOption = document.createElement("option");
         newOption.setAttribute("value",i)
-        // newOption.setAttribute("type","hidden")
         newOption.textContent = i
         selectMonth.appendChild(newOption)
     }
@@ -24,13 +23,11 @@ document.addEventListener('DOMContentLoaded',function(){
     for(let i =1;i<=31;i++){
         const newOption = document.createElement("option");
         newOption.setAttribute("value",i)
-        // newOption.setAttribute("type","hidden")
         newOption.textContent = i
         selectDay.appendChild(newOption)
     }
 
     const forms = document.querySelectorAll('.needs-validation')
-  // Loop over them and prevent submission
     Array.from(forms).forEach(form => {
     form.addEventListener('submit', event => {
         if (!form.checkValidity()) {
