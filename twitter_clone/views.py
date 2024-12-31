@@ -63,7 +63,7 @@ def signup_view(request):
             if not is_valid_email(email):
                 messages.error(request, "メールアドレスの値が不正です。")
                 raise Exception()
-            if not is_valid_phone_number(tel):
+            if not tel and is_valid_phone_number(tel):
                 messages.error(request, "電話番号の値が不正です。")
                 raise Exception()
 
@@ -97,6 +97,15 @@ def signup_view(request):
 
 
 def email_verify_view(request):
+    # user_idがセッションに存在しない場合、サインアップ画面へリダイレクト
+    if 'user_id' not in request.session:
+        messages.error(request, "セッションが無効です。サインアップを最初からやり直してください。")
+        return redirect('signup')
+    # 既に認証済みの場合はトップ画面へリダイレクト
+    custom_user = CustomUser.objects.get(id=request.session['user_id'])
+    if custom_user.is_active:
+        messages.info(request, "既に認証が完了しています。")
+        return redirect('top')
     if request.method == 'POST':
         try:
             code = request.POST.get("authenticate-code", None)
@@ -122,6 +131,16 @@ def email_verify_view(request):
     return render(request, 'account/signup_email_verify.html')
 
 def password_input_view(request):
+    # 以下の場合はトップ画面へリダイレクト
+    # --セッション情報なし
+    if 'user_id' not in request.session:
+        messages.error(request, "セッションが無効です。サインアップを最初からやり直してください。")
+        return redirect('signup')
+    # --パスワード設定済み
+    custom_user = CustomUser.objects.get(id=request.session['user_id'])
+    if custom_user.password:
+        messages.info(request, "既にパスワード設定が完了しています。")
+        return redirect('top')
     if request.method == 'POST':
         try:
             password = request.POST.get("password", None)
