@@ -192,9 +192,9 @@ def top_view(request):
     return render(request, 'twitter_clone/top.html')
 
 def main_view(request):
-    try:
-        login_user = get_user_from_session(request)
-        return render(request, 'twitter_clone/main.html', {'login_user': login_user})
-    except ObjectDoesNotExist:
-        messages.error(request, "セッションが無効です。ログインしてください。")
-        return redirect('login')
+    # try:
+        # login_user = get_user_from_session(request)
+        return render(request, 'twitter_clone/main.html')
+    # except ObjectDoesNotExist:
+    #     messages.error(request, "セッションが無効です。ログインしてください。")
+    #     return redirect('login')

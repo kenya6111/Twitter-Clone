@@ -143,11 +143,11 @@ ACCOUNT_EMAIL_REQUIRED = True
 # ユーザー名の登録を不要にする
 ACCOUNT_USERNAME_REQUIRED = False
 # 登録後、メールアドレスに確認メールが送信される
-ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_RATE_LIMITS=False
-LOGIN_REDIRECT_URL = ''  # ログイン後のリダイレクト先
-LOGOUT_REDIRECT_URL = ''  # ログアウト後のリダイレクト先
-
+LOGIN_REDIRECT_URL = 'main'  # ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = '/'  # ログアウト後のリダイレクト先
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'twitter_clone.CustomUser'
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')

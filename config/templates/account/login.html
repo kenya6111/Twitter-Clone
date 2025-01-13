@@ -8,6 +8,15 @@
 {% endblock %}
 
 {% block content %}
+{% if form.errors %}
+    <ul>
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
 <div class="w-100 d-flex align-items-center h-100 bg-signup-parent">
     <div class="form-signin w-75 h-75 m-auto bg-black text-white p-5 rounded-4 width height">
         <img src="{% static 'logo/logo-white.png' %}" class="d-block mx-auto" alt="My image" width="4%">
@@ -20,15 +29,15 @@
             {% endif %}
             <h1 class="h3 mb-4 fw-normal text-start fw-bold fs-2">Xにログイン</h1>
             <div class="form-floating mb-4">
-                <input type="text" class="text-white bg-black form-control border-gray" name="tel_email_name" id="name" placeholder="" autocomplete="off" required>
-                <label for="name" class="text-gray form-label floating-label" required>電話番号/メールアドレス/ユーザ名</label>
+                <input type="email" class="text-white bg-black form-control border-gray" name="login" id="id_login" placeholder="" autocomplete="off" required>
+                <label for="id_login" class="text-gray form-label floating-label" required>電話番号/メールアドレス/ユーザ名</label>
                 <div class="invalid-feedback">
                     名前を入力してください。
                 </div>
             </div>
             <div class="form-floating mb-4">
-                <input type="text" class="text-white bg-black form-control border-gray" name="password" id="password" placeholder="" autocomplete="off" required>
-                <label for="password" class="text-gray form-label floating-label" required>パスワード</label>
+                <input type="password" class="text-white bg-black form-control border-gray" name="password" id="id_password" placeholder="" autocomplete="off" required>
+                <label for="id_password" class="text-gray form-label floating-label" required>パスワード</label>
                 <div class="invalid-feedback">
                     パスワードを入力してください。
                 </div>

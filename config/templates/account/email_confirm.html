@@ -20,8 +20,9 @@
 <div class="w-100 d-flex align-items-center h-100 bg-signup-parent">
     <div class="form-signin w-75 h-75 m-auto bg-black text-white p-5 rounded-4 width height">
         <img src="{% static 'logo/logo-white.png' %}" class="d-block mx-auto" alt="My image" width="4%">
-        <form class="m-3 needs-validation" action="{% url 'account_signup' %}" method="POST" novalidate> {% csrf_token %}
-            <h1 class="h3 mb-4 fw-normal text-start fw-bold fs-2">アカウントを作成</h1>
+        <form class="m-3 needs-validation" action="{% url 'account_confirm_email' confirmation.key as action_url %}" method="POST" novalidate> {% csrf_token %}
+            <h1 class="h3 mb-4 fw-normal text-start fw-bold fs-2">メールアドレスの確認</h1>
+            <a href="mailto:{{ email }}">{{ email }}</a>があなたのメールアドレスであることを確認してください。
             <!-- <div class="form-floating mb-4">
                 <input type="text" class="text-white bg-black form-control border-gray" name="name" id="name" placeholder="" autocomplete="off" required>
                 <label for="name" class="text-gray form-label floating-label" required>名前</label>
@@ -29,13 +30,13 @@
                     名前を入力してください。
                 </div>
             </div> -->
-            <div class="form-floating mb-4">
+            <!-- <div class="form-floating mb-4">
                 <input type="email" class="text-white bg-black form-control border-gray" name="email" id="id_email" placeholder="" maxlength="320" required>
                 <label for="id_email" class="text-gray floating-label">メールアドレス</label>
                 <div class="invalid-feedback">
                     有効なメールアドレスを入力してください。
                 </div>
-            </div>
+            </div> -->
             <!-- <div class="form-floating mb-4">
                 <input type="text" class="text-white bg-black form-control border-gray" name="tel" id="tel" placeholder="">
                 <label for="tel" class="text-gray floating-label">電話番号</label>
@@ -43,7 +44,7 @@
                     Valid tel is required.
                 </div>
             </div> -->
-            <div class="form-floating mb-4">
+            <!-- <div class="form-floating mb-4">
                 <input type="password" class="text-white bg-black form-control border-gray" name="password1" id="id_password1" placeholder="" autocomplete="new-password" required>
                 <label for="id_password1" class="text-gray floating-label">パスワード</label>
                 <div class="invalid-feedback">
@@ -56,7 +57,7 @@
                 <div class="invalid-feedback">
                     有効なパスワードを入力してください。
                 </div>
-            </div>
+            </div> -->
             <!-- <div class="container text-center">
                 <div class="text-start">
                     <p class="mb-0 fw-bold">生年月日</p>
@@ -98,7 +99,7 @@
                 </div>
             </div> -->
             <!-- </div> -->
-            <button class="btn rounded-5 d-block w-100 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">次へ</button>
+            <button class="btn rounded-5 d-block w-100 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">認証する</button>
         </form>
             {% if messages %}
             {% for message in messages %}
