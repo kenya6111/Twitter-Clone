@@ -18,6 +18,7 @@ from django.core.exceptions import ObjectDoesNotExist
 # from allauth.account.forms import LoginForm
 # from .forms import SignupForm
 import re
+import secrets
 
 # ヘルパー関数
 def get_user_from_session(request):
@@ -81,7 +82,8 @@ def signup_view(request):
             custom_user.save()
 
             # 認証コードを生成
-            authenticate_code= str(random.randint(100000,999999))
+            # authenticate_code= str(random.randint(100000,999999))
+            authenticate_code= str(secrets.token_hex(16))
             email_verification = EmailVerificationModel(user=custom_user, code=authenticate_code)
             email_verification.save()
 
