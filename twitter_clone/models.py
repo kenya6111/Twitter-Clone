@@ -6,11 +6,11 @@ from django.contrib.auth.models import AbstractUser
 
 class CustomUser(AbstractUser):
     class Meta(AbstractUser.Meta):
-        db_table = 'custom_user'
+        db_table = 'users'
 
 
     # user_name = models.CharField(max_length=50,blank=True, null=True)
-    email = models.EmailField(max_length=100,blank=True, null=True)
+    email = models.EmailField(max_length=100, null=False, unique=True)
     tel = models.EmailField(max_length=100,blank=True, null=True)
     date_of_birth = models.EmailField(max_length=100,blank=True, null=True)
     # age = models.IntegerField('年齢', blank=True, null=True)
