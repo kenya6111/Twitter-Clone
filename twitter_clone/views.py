@@ -1,35 +1,15 @@
 from datetime import datetime
-import random
-# from urllib.parse import urlencode
 from django.shortcuts import render,redirect
 from django.contrib import messages
-# from django.contrib.auth import login
-# from django.urls import reverse_lazy
-# from django.views.generic import CreateView
-# from django.core.mail import BadHeaderError
 from django.core.mail import send_mail
-# from django.template.loader import render_to_string
-# from twitter_clone.forms import CustomLoginForm
-from twitter_clone.models import CustomUser,EmailVerificationModel
-# from django.template.loader import get_template
+from twitter_clone.models import CustomUser
 from django.core.exceptions import ObjectDoesNotExist
-# from django.urls import reverse
-# from allauth.account.views import LoginView
-# from allauth.account.forms import LoginForm
-# from .forms import SignupForm
-import re
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
 
 # ヘルパー関数
-def get_user_from_session(request):
-    user_id = request.session.get('user_id')
-    if not user_id:
-        raise ObjectDoesNotExist("セッションにユーザIDがありません。")
-    return CustomUser.objects.get(id=user_id)
-
 def send_verification_email(user,code):
-    email = "kenyanke6111@gmail.com"
+    # email = "kenyanke6111@gmail.com"
     """題名"""
     subject = f"Xの認証コードは{code}です"
     """本文"""
@@ -97,10 +77,8 @@ def email_verify_view(request):
     if request.method == 'POST':
         try:
             code = request.POST.get("authenticate-code", None)
-            # custom_user = get_user_from_session(request)
             custom_user = CustomUser.get_user_from_session(request.session)
-
-            email_verification = EmailVerificationModel.objects.get(user=custom_user, code=code)
+            email_verification = custom_user.email_verification.get(code=code)
 
             custom_user.is_active=True
             custom_user.save()
@@ -133,7 +111,6 @@ def password_input_view(request):
     if request.method == 'POST':
         try:
             password = request.POST.get("password", None)
-            # custom_user = get_user_from_session(request)
             custom_user = CustomUser.get_user_from_session(request.session)
             custom_user.password = make_password(password)
             custom_user.save()
@@ -153,12 +130,7 @@ def login_view(request):
             input_password = request.POST.get("password", None)
 
             custom_user = None
-            # if is_valid_email(tel_email_name):
             custom_user = CustomUser.objects.get(email=tel_email_name)
-            # elif is_valid_phone_number(tel_email_name):
-            #     custom_user = CustomUser.objects.get(tel=tel_email_name)
-            # else:
-            #     custom_user = CustomUser.objects.get(username=tel_email_name)
 
             # パスワード一致チェック
             if not check_password(input_password ,custom_user.password):
@@ -180,17 +152,12 @@ def login_view(request):
     return render(request, 'account/login.html')
 
 def logout_view(request):
-        request.session.clear()
-        messages.success(request, "ログアウトが完了しました。")
-        return redirect('top')
+    request.session.clear()
+    messages.success(request, "ログアウトが完了しました。")
+    return redirect('top')
 
 def top_view(request):
     return render(request, 'twitter_clone/top.html')
 
 def main_view(request):
-    # try:
-        # login_user = get_user_from_session(request)
-        return render(request, 'twitter_clone/main.html')
-    # except ObjectDoesNotExist:
-    #     messages.error(request, "セッションが無効です。ログインしてください。")
-    #     return redirect('login')
+    return render(request, 'twitter_clone/main.html')

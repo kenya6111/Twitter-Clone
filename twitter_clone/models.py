@@ -1,4 +1,3 @@
-# import random
 from django.db import models
 import re
 from django.core.exceptions import ObjectDoesNotExist
@@ -26,6 +25,7 @@ class CustomUser(AbstractUser):
     def is_valid_phone_number(phone_number):
         phone_number_pattern = r"^0[789]0\d{8}$"
         return bool(re.match(phone_number_pattern, phone_number))
+
     @classmethod
     def get_user_from_session(cls, session):
         """セッションからユーザを取得する"""
