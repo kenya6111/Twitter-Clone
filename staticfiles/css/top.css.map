@@ -1,9 +1,0 @@
-{
-	"version": 3,
-	"file": "top.css",
-	"sources": [
-		"top.scss"
-	],
-	"names": [],
-	"mappings": "AAAA,AAAA,WAAW,AAAA,OAAO,AAAC,CACf,UAAU,CAAE,eAAe,CAC9B,AACD,AAAA,WAAW,AAAA,CACP,SAAS,CAAC,MAAM,CACnB,AAED,AAAA,OAAO,AAAA,CACH,KAAK,CAAC,KAAK,CACd,AACD,AAAA,QAAQ,AAAA,CACJ,SAAS,CAAC,MAAM,CACnB"
-}
