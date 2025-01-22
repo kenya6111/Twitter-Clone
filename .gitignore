@@ -2,3 +2,7 @@
 *.log
 *.pyc
 __pycache__/
+report.md
+test.css
+.vscode
+staticfiles

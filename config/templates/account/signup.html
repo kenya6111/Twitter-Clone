@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+    <ul>
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
+<div class="w-100 d-flex align-items-center h-100 bg-signup-parent">
+    <div class="form-signin w-75 h-75 m-auto bg-black text-white p-5 rounded-4 width height">
+        <img src="{% static 'logo/logo-white.png' %}" class="d-block mx-auto" alt="My image" width="4%">
+        <form class="m-3 needs-validation" action="{% url 'account_signup' %}" method="POST" novalidate> {% csrf_token %}
+            <h1 class="h3 mb-4 fw-normal text-start fw-bold fs-2">アカウントを作成</h1>
+            <!-- <div class="form-floating mb-4">
+                <input type="text" class="text-white bg-black form-control border-gray" name="name" id="name" placeholder="" autocomplete="off" required>
+                <label for="name" class="text-gray form-label floating-label" required>名前</label>
+                <div class="invalid-feedback">
+                    名前を入力してください。
+                </div>
+            </div> -->
+            <div class="form-floating mb-4">
+                <input type="email" class="text-white bg-black form-control border-gray" name="email" id="id_email" placeholder="" maxlength="320" required>
+                <label for="id_email" class="text-gray floating-label">メールアドレス</label>
+                <div class="invalid-feedback">
+                    有効なメールアドレスを入力してください。
+                </div>
+            </div>
+            <!-- <div class="form-floating mb-4">
+                <input type="text" class="text-white bg-black form-control border-gray" name="tel" id="tel" placeholder="">
+                <label for="tel" class="text-gray floating-label">電話番号</label>
+                <div class="invalid-feedback">
+                    Valid tel is required.
+                </div>
+            </div> -->
+            <div class="form-floating mb-4">
+                <input type="password" class="text-white bg-black form-control border-gray" name="password1" id="id_password1" placeholder="" autocomplete="new-password" required>
+                <label for="id_password1" class="text-gray floating-label">パスワード</label>
+                <div class="invalid-feedback">
+                    有効なパスワードを入力してください。
+                </div>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="password" class="text-white bg-black form-control border-gray" name="password2" id="id_password2" placeholder="" autocomplete="new-password" required>
+                <label for="id_password2" class="text-gray floating-label">パスワード(確認用)</label>
+                <div class="invalid-feedback">
+                    有効なパスワードを入力してください。
+                </div>
+            </div>
+            <!-- <div class="container text-center">
+                <div class="text-start">
+                    <p class="mb-0 fw-bold">生年月日</p>
+                    <p class="fs-6 text-gray">この情報は公開されません。このアカウントをビジネス、ペットなどに使う場合でも、ご自身の年齢を確認してください。</p>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating">
+                            <label for="select-month" class="text-gray floating-label select-date"><span>月</span></label>
+                            <select id="select-month" class="form-select selectpicker form-inline bg-black border-gray text-white" placeholder="月" name="month">
+                                <option value="" hidden></option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a valid month.
+                            </div>
+                        </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <label for="select-day" class="text-gray floating-label select-date"><span>日</span></label>
+                        <select id="select-day" class="form-select selectpicker form-inline bg-black border-gray text-white" placeholder="日" name="day">
+                            <option value="" hidden></option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a valid day.
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <label for="select-year" class="text-gray floating-label select-date"><span>年</span></label>
+                        <select id="select-year" class="form-select selectpicker form-inline bg-black border-gray text-white " placeholder="年" name="year">
+                            <option value="" hidden></option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a valid year.
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <!-- </div> -->
+            <button class="btn rounded-5 d-block w-100 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">次へ</button>
+        </form>
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">{{ message }}
+                </div>
+            {% endfor %}
+            {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/signup.js' %}"></script>
+{% endblock %}

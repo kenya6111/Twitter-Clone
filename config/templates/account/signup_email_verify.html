@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="w-100 d-flex align-items-center h-100 bg-signup-parent">
+    <div class="form-signin w-75 h-75 m-auto bg-black text-white p-5 rounded-4 width height">
+        <img src="{% static 'logo/logo-white.png' %}" class="d-block mx-auto" alt="My image" width="4%">
+        <form class="m-3 needs-validation" action="{% url 'email_verify' %}" method="POST" novalidate> 
+            {% csrf_token %}
+            <h1 class="h3 mb-4 fw-normal text-start fw-bold fs-2">認証コードを送信しました。</h1>
+            <div class="text-start">
+                <p class="fs-6 text-gray">メールアドレスを認証するため、以下にコードを入力してください。{{ email }}</p>
+            </div>
+            <div class="form-floating mb-4">
+                <input type="text" class="text-white bg-black form-control border-gray" name="authenticate-code" id="authenticate-code" placeholder="" autocomplete="off" required>
+                <label for="authenticate-code" class="text-gray form-label floating-label" required>認証コード</label>
+                <div class="invalid-feedback">
+                    認証コードを入力してください。
+                </div>
+            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <button class="btn rounded-5 d-block w-100 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">次へ</button>
+            <input type="hidden" name="email" value="{{ email }}">
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/emailVerify.js' %}"></script>
+{% endblock %}
