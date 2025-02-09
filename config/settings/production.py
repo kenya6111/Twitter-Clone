@@ -7,3 +7,13 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER_PRODUCTION')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD_PRODUCTION')
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'APP': {
+            'client_id': env('SOCIAL_AUTH_GITHUB_KEY', default=''),
+            'secret': env('SOCIAL_AUTH_GITHUB_SECRET', default=''),
+        }
+    }
+}

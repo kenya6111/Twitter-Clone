@@ -190,19 +190,3 @@ SASS_OUTPUT_STYLE = 'compressed'
 SASS_TEMPLATE_EXTS = ['.html', '.haml']
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# SOCIALACCOUNT_PROVIDERS = {
-#     "github": {
-#         'APP': {
-#             'client_id': 'Ov23li1vGWKuExiStQ7b',
-#             'secret': '0073afc8211c015b009739011be2f6b894dd3f0e',
-#         },
-#         'AUTH_PARAMS': {
-#             'redirect_uri': 'http://127.0.0.1:8000/accounts/github/login/callback/',
-#         },
-#         'SCOPE': [
-#             'user',
-#             'user:email',
-#         ],
-#     }
-# }
