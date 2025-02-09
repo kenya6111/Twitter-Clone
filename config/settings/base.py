@@ -2,9 +2,32 @@ import environ
 import os
 
 from pathlib import Path
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'allauth': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
@@ -35,6 +58,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
     'sass_processor',
     'widget_tweaks',
 ]
@@ -150,14 +174,6 @@ LOGOUT_REDIRECT_URL = '/'  # ログアウト後のリダイレクト先
 ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'twitter_clone.CustomUser'
 
-EMAIL_BACKEND = env('EMAIL_BACKEND')
-EMAIL_HOST = env('EMAIL_HOST')
-EMAIL_PORT = env('EMAIL_PORT')
-# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-# EMAIL_USE_TLS = env('EMAIL_USE_TLS')
-EMAIL_USE_TLS = False  # TLSを無効化
-EMAIL_USE_SSL = False  # SSLを無効化
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 STATICFILES_FINDERS = [
@@ -174,3 +190,19 @@ SASS_OUTPUT_STYLE = 'compressed'
 SASS_TEMPLATE_EXTS = ['.html', '.haml']
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     "github": {
+#         'APP': {
+#             'client_id': 'Ov23li1vGWKuExiStQ7b',
+#             'secret': '0073afc8211c015b009739011be2f6b894dd3f0e',
+#         },
+#         'AUTH_PARAMS': {
+#             'redirect_uri': 'http://127.0.0.1:8000/accounts/github/login/callback/',
+#         },
+#         'SCOPE': [
+#             'user',
+#             'user:email',
+#         ],
+#     }
+# }
