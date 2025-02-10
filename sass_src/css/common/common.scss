@@ -18,6 +18,14 @@ color:rgb(99,104,108)
 border:1px solid rgb(112, 114, 119)
 }
 
+.border-gray-side{
+  border-left: 1px solid rgb(41, 45, 47);
+  border-right: 1px solid rgb(41, 45, 47);
+}
+.border-gray-bottom{
+  border-bottom: 1px solid rgb(41, 45, 47);
+}
+
 .w-40{
   width:40%
 }

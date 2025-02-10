@@ -15,16 +15,33 @@
     </div>
 {% endfor %}
 {% endif %}
-ログインユーザ: id:{{ login_user.id }}  
-name:{{ login_user.username }}
-<a href="{% url 'account_logout' %}" class="btn btn-primary rounded-5 fw-bold " tabindex="-1" role="button" aria-disabled="true">ログアウト</a>
+<!-- ログインユーザ: id:{{ login_user.id }}  
+name:{{ login_user.username }} -->
 <div class="w-100 h-100 bg-top-parent">
+    <div class="d-flex flex-row align-items-center border-gray-bottom p-2">
+        <div class="ms-5 me-auto">
+            <i class="bi bi-twitter-x text-white fs-2"></i>
+            <span class="text-white fs-5">Twitterクローン</span>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="me-2">
+            <a href="{% url 'account_logout' %}" class="btn btn-primary fw-bold " tabindex="-1" role="button" aria-disabled="true">ログアウト</a>
+        </div>
+        {% else %}
+        <div class="me-2">
+            <a href="{% url 'account_login' %}" class="btn btn-primary  fw-bold " tabindex="-1" role="button" aria-disabled="true">ログイン</a>
+        </div>
+        <div class="me-2">
+            <a href="{% url 'account_signup' %}" class="btn btn-primary fw-bold " tabindex="-1" role="button" aria-disabled="true">新規登録</a>
+        </div>
+        {% endif %}
+    </div>
     <div class="row h-100">
-        <div class="col-4 bg-success">
+        <div class="col-4">
         </div>
-        <div class="col-4 bg-info">
+        <div class="col-4 border-gray-side">
         </div>
-        <div class="col-4 bg-primary">
+        <div class="col-4">
         </div>
     </div>
 </div>
