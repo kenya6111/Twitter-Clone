@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+    <ul>
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
+<div class="w-100 d-flex align-items-center h-100 bg-signup-parent">
+    <div class="form-signin w-75 h-75 m-auto bg-black text-white p-5 rounded-4 width height">
+        <img src="{% static 'logo/logo-white.png' %}" class="d-block mx-auto" alt="My image" width="4%">
+        <form class="m-3 needs-validation" method="POST" novalidate>
+            {% csrf_token %}
+            <button class="btn rounded-5 d-block w-100 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">Continue</button>
+        </form>
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">{{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
