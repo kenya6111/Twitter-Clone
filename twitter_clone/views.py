@@ -2,7 +2,7 @@ from datetime import datetime
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser
+from twitter_clone.models import CustomUser, TweetModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -160,4 +160,54 @@ def top_view(request):
     return render(request, 'twitter_clone/top.html')
 
 def main_view(request):
-    return render(request, 'twitter_clone/main.html')
+    tweet_list=[]
+    filter_type = request.GET.get("filter")
+
+    user = request.user
+    custom_users = CustomUser.objects.get(id=user.id).follower.all().values_list('following_id', flat=True)
+
+    if filter_type == 'foryou':
+        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+        print(1)
+    elif filter_type == 'follow':
+        tweet_list = TweetModel.objects.all().filter(user__in=custom_users).order_by('-updated_at')
+        print(1)
+    else:
+        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+
+    # if request.method == 'POST':
+        # try:
+            # json_body = request.body.decode("utf-8")
+            # body = json.loads(json_body)
+
+            # # プロモーションコードがDBに存在するか確認
+            # redeem_code = body["redeem_code"]
+            # redeem = PromotionCodeModel.objects.get(promote_code=redeem_code)
+            # if redeem.is_used:
+            #     data ={
+            #         'status':'error',
+            #         'message':'already used'
+            #     }
+            # else:
+            #     data = {
+            #         'status':'success',
+            #         'message':'code found',
+            #         'redeem': {
+            #             'code':redeem.promote_code,
+            #             'discount_amount':redeem.discount_amount
+            #         }
+            #     }
+            #     redeem.is_used = True
+            #     redeem.save()
+            #     request.session['redeem_code'] = redeem_code
+        # except ObjectDoesNotExist:
+            # data ={
+            #     'status':'error',
+            #     'message':'code not found'
+            # }
+        # except Exception as e:
+            # data = {
+            #     'status': 'error',
+            #     'message': str(e),
+            # }
+    return render(request, 'twitter_clone/main.html',{'tweet_list':tweet_list})
