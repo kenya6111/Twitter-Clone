@@ -6,6 +6,7 @@ from twitter_clone.models import CustomUser, TweetModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
+from django.core.paginator import Paginator
 
 # ヘルパー関数
 def send_verification_email(user,code):
@@ -175,6 +176,26 @@ def main_view(request):
     else:
         tweet_list = TweetModel.objects.all().order_by('-updated_at')
 
+    # objects = ['Taro', 'Hanako', 'Jiro', 'Takashi', 'Kaori','AAA','BBB','CCC','DDD','EEE']
+    page = 1 # 表示したいページ
+    page_cnt = 2 #一画面あたり10コ表示する
+    onEachSide = 2 #選択ページの両側には3コ表示する
+    onEnds = 2 #左右両端には2コ表示する
+
+    # querysetと、1ページあたりの表示件数
+    data_page = Paginator(tweet_list, 2)
+
+    p = request.GET.get('p') # URLのパラメータから現在のページ番号を取得
+    articles = data_page.get_page(p) # 指定のページのArticleを
+
+    print(data_page.num_pages)# ページ数出力
+
+    # paginatorのオブジェクトからページを指定した状態のオブジェクトつくってる
+    # data_p = data_page.get_page(page)
+
+    # 指定したページのオブジェクトからページリンク先のリストを作っている
+    # data_list = data_p.paginator.get_elided_page_range(page, on_each_side=onEachSide, on_ends=onEnds)
+
     # if request.method == 'POST':
         # try:
             # json_body = request.body.decode("utf-8")
@@ -210,4 +231,4 @@ def main_view(request):
             #     'status': 'error',
             #     'message': str(e),
             # }
-    return render(request, 'twitter_clone/main.html',{'tweet_list':tweet_list})
+    return render(request, 'twitter_clone/main.html',{'tweet_list':tweet_list,'articles': articles })
