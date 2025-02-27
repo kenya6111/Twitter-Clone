@@ -2,7 +2,7 @@ from datetime import datetime
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel
+from twitter_clone.models import CustomUser, TweetModel, FollowModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -162,21 +162,27 @@ def top_view(request):
 
 def main_view(request):
     tweet_list=[]
-    filter_type = request.GET.get("filter")
-
+    filter_type=''
+    if "filter" in request.GET:
+        request.session['filtersession'] = request.GET.get("filter")
+        print(request.GET.get("filter"))
+        filter_type = request.GET.get("filter")
+    else:
+        filter_type = request.session['filtersession']
     user = request.user
-    custom_users = CustomUser.objects.get(id=user.id).following.all().values_list('following_id', flat=True)
+    custom_user = CustomUser.objects.get(id=user.id)
 
     if filter_type == 'foryou':
         tweet_list = TweetModel.objects.all().order_by('-updated_at')
-        print(1)
     elif filter_type == 'follow':
-        tweet_list = TweetModel.objects.all().filter(user__in=custom_users).order_by('-updated_at')
-        print(1)
+        following_users = CustomUser.objects.filter(
+            id__in=FollowModel.objects.filter(following=custom_user).values_list("follower_id", flat=True)
+        )
+        tweet_list = TweetModel.objects.filter(user__in=following_users).order_by('-created_at')
     else:
         tweet_list = TweetModel.objects.all().order_by('-updated_at')
-    data_page = Paginator(tweet_list, 2) # querysetと、1ページあたりの表示件数
+    data_page = Paginator(tweet_list, 2)
 
-    p = request.GET.get('p') # URLのパラメータから現在のページ番号を取得
-    articles = data_page.get_page(p) # 指定のページのArticleを
+    p = request.GET.get('p')
+    articles = data_page.get_page(p)
     return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})
