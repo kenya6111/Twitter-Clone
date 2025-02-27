@@ -47,7 +47,7 @@ class EmailVerificationModel(models.Model):
 class TweetModel(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tweet', null=True, blank=True)
     sentense = models.TextField(max_length=270)
-    image = models.ImageField(upload_to='images', verbose_name='イメージ画像', null=True, blank=True)
+    image = models.ImageField(upload_to='images', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True,blank=True,null=True)
 
@@ -55,37 +55,40 @@ class FollowModel(models.Model):
     follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='follower')
     following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["follower", "following"],
                 name="follow_unique"
-        ),
-    ]
+            ),
+        ]
 
 class LikeModel(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='likes')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='likes')
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "tweet"],
                 name="like_unique"
-        ),
-    ]
+            ),
+        ]
 
 class RetweetModel(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='retweets')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='retweets')
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "tweet"],
                 name="retweet_unique"
-        ),
-    ]
+            ),
+        ]
 
 class ReplyModel(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='replies')

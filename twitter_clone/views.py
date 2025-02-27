@@ -165,7 +165,7 @@ def main_view(request):
     filter_type = request.GET.get("filter")
 
     user = request.user
-    custom_users = CustomUser.objects.get(id=user.id).follower.all().values_list('following_id', flat=True)
+    custom_users = CustomUser.objects.get(id=user.id).following.all().values_list('following_id', flat=True)
 
     if filter_type == 'foryou':
         tweet_list = TweetModel.objects.all().order_by('-updated_at')
@@ -175,60 +175,8 @@ def main_view(request):
         print(1)
     else:
         tweet_list = TweetModel.objects.all().order_by('-updated_at')
-
-    # objects = ['Taro', 'Hanako', 'Jiro', 'Takashi', 'Kaori','AAA','BBB','CCC','DDD','EEE']
-    page = 1 # 表示したいページ
-    page_cnt = 2 #一画面あたり10コ表示する
-    onEachSide = 2 #選択ページの両側には3コ表示する
-    onEnds = 2 #左右両端には2コ表示する
-
-    # querysetと、1ページあたりの表示件数
-    data_page = Paginator(tweet_list, 2)
+    data_page = Paginator(tweet_list, 2) # querysetと、1ページあたりの表示件数
 
     p = request.GET.get('p') # URLのパラメータから現在のページ番号を取得
     articles = data_page.get_page(p) # 指定のページのArticleを
-
-    print(data_page.num_pages)# ページ数出力
-
-    # paginatorのオブジェクトからページを指定した状態のオブジェクトつくってる
-    # data_p = data_page.get_page(page)
-
-    # 指定したページのオブジェクトからページリンク先のリストを作っている
-    # data_list = data_p.paginator.get_elided_page_range(page, on_each_side=onEachSide, on_ends=onEnds)
-
-    # if request.method == 'POST':
-        # try:
-            # json_body = request.body.decode("utf-8")
-            # body = json.loads(json_body)
-
-            # # プロモーションコードがDBに存在するか確認
-            # redeem_code = body["redeem_code"]
-            # redeem = PromotionCodeModel.objects.get(promote_code=redeem_code)
-            # if redeem.is_used:
-            #     data ={
-            #         'status':'error',
-            #         'message':'already used'
-            #     }
-            # else:
-            #     data = {
-            #         'status':'success',
-            #         'message':'code found',
-            #         'redeem': {
-            #             'code':redeem.promote_code,
-            #             'discount_amount':redeem.discount_amount
-            #         }
-            #     }
-            #     redeem.is_used = True
-            #     redeem.save()
-            #     request.session['redeem_code'] = redeem_code
-        # except ObjectDoesNotExist:
-            # data ={
-            #     'status':'error',
-            #     'message':'code not found'
-            # }
-        # except Exception as e:
-            # data = {
-            #     'status': 'error',
-            #     'message': str(e),
-            # }
-    return render(request, 'twitter_clone/main.html',{'tweet_list':tweet_list,'articles': articles })
+    return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})
