@@ -53,7 +53,7 @@ class EmailVerificationModel(BaseModel):
         return "user_id:" + str(self.user.id) +", user_name:"+ str(self.user.username)+ ", code:"+str(self.code) + ", created_at:" + str(self.created_at)
 
 class TweetModel(BaseModel):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tweet', null=True, blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tweet', null=False, blank=True)
     sentense = models.TextField(max_length=270)
     image = models.ImageField(upload_to='images', null=True, blank=True)
     # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
