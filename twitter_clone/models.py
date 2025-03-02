@@ -40,6 +40,8 @@ class EmailVerificationModel(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='email_verification', null=True, blank=True)
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    class Meta:
+        db_table = "email_verifications"
 
     def __str__(self):
         return "user_id:" + str(self.user.id) +", user_name:"+ str(self.user.username)+ ", code:"+str(self.code) + ", created_at:" + str(self.created_at)
@@ -50,6 +52,8 @@ class TweetModel(models.Model):
     image = models.ImageField(upload_to='images', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True,blank=True,null=True)
+    class Meta:
+        db_table = "tweets"
 
 class FollowModel(models.Model):
     follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='follower')
@@ -57,6 +61,7 @@ class FollowModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
+        db_table = "follows"
         constraints = [
             models.UniqueConstraint(
                 fields=["follower", "following"],
@@ -70,6 +75,7 @@ class LikeModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
+        db_table = "likes"
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "tweet"],
@@ -83,6 +89,7 @@ class RetweetModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
+        db_table = "retweets"
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "tweet"],
@@ -95,3 +102,5 @@ class ReplyModel(models.Model):
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField(max_length=270)
     created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        db_table = "replies"
