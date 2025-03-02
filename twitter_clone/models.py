@@ -4,6 +4,12 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    class Meta:
+        abstract = True
 
 class CustomUser(AbstractUser):
     class Meta(AbstractUser.Meta):
@@ -36,29 +42,29 @@ class CustomUser(AbstractUser):
         return cls.objects.get(id=user_id)
 
 
-class EmailVerificationModel(models.Model):
+class EmailVerificationModel(BaseModel):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='email_verification', null=True, blank=True)
     code = models.CharField(max_length=6)
-    created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     class Meta:
         db_table = "email_verifications"
 
     def __str__(self):
         return "user_id:" + str(self.user.id) +", user_name:"+ str(self.user.username)+ ", code:"+str(self.code) + ", created_at:" + str(self.created_at)
 
-class TweetModel(models.Model):
+class TweetModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tweet', null=True, blank=True)
     sentense = models.TextField(max_length=270)
     image = models.ImageField(upload_to='images', null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True,blank=True,null=True)
+    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    # updated_at = models.DateTimeField(auto_now=True,blank=True,null=True)
     class Meta:
         db_table = "tweets"
 
-class FollowModel(models.Model):
+class FollowModel(BaseModel):
     follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='follower')
     following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
-    created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
         db_table = "follows"
@@ -69,10 +75,10 @@ class FollowModel(models.Model):
             ),
         ]
 
-class LikeModel(models.Model):
+class LikeModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='likes')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='likes')
-    created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
         db_table = "likes"
@@ -83,10 +89,10 @@ class LikeModel(models.Model):
             ),
         ]
 
-class RetweetModel(models.Model):
+class RetweetModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='retweets')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='retweets')
-    created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
         db_table = "retweets"
@@ -97,10 +103,10 @@ class RetweetModel(models.Model):
             ),
         ]
 
-class ReplyModel(models.Model):
+class ReplyModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='replies')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField(max_length=270)
-    created_at = models.DateTimeField(auto_now_add=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         db_table = "replies"
