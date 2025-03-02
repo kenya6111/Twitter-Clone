@@ -62,8 +62,8 @@ class TweetModel(BaseModel):
         db_table = "tweets"
 
 class FollowModel(BaseModel):
-    follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='follower')
-    following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='following')
+    follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
+    following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followings')
     # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
