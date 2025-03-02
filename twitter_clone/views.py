@@ -160,11 +160,6 @@ def top_view(request):
 def main_view(request):
     tweet_list=[]
     filter_type=''
-    # if "filter" in request.GET:
-    #     request.session['filtersession'] = request.GET.get("filter")
-    #     filter_type = request.GET.get("filter")
-    # else:
-    #     filter_type = request.session.get('filtersession', '')
     filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
     request.session['filtersession'] = filter_type
 
@@ -175,7 +170,7 @@ def main_view(request):
         tweet_list = TweetModel.objects.all().order_by('-updated_at')
     elif filter_type == 'follow':
         following_users = CustomUser.objects.filter(
-            id__in=FollowModel.objects.filter(following=custom_user).values_list("follower_id", flat=True)
+            id__in=custom_user.followings.values_list("follower_id", flat=True)
         )
         tweet_list = TweetModel.objects.filter(user__in=following_users).order_by('-created_at')
     else:
