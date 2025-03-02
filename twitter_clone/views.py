@@ -160,11 +160,14 @@ def top_view(request):
 def main_view(request):
     tweet_list=[]
     filter_type=''
-    if "filter" in request.GET:
-        request.session['filtersession'] = request.GET.get("filter")
-        filter_type = request.GET.get("filter")
-    else:
-        filter_type = request.session.get('filtersession', '')
+    # if "filter" in request.GET:
+    #     request.session['filtersession'] = request.GET.get("filter")
+    #     filter_type = request.GET.get("filter")
+    # else:
+    #     filter_type = request.session.get('filtersession', '')
+    filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
+    request.session['filtersession'] = filter_type
+
     user = request.user
     custom_user = CustomUser.objects.get(id=user.id)
 
