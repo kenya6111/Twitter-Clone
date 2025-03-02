@@ -48,10 +48,7 @@ def signup_view(request):
                 custom_user.save()
 
             # 認証コードを生成
-            # authenticate_code= str(random.randint(100000,999999))
             authenticate_code= str(secrets.token_hex(16))
-            # email_verification = EmailVerificationModel(user=custom_user, code=authenticate_code)
-            # email_verification.save()
             custom_user.email_verifications.create(code=authenticate_code)
 
             # 認証コード付きメールを送信

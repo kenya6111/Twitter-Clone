@@ -155,42 +155,6 @@
                     </div>
                 </div>
             </div>
-            <!-- ツイート表示エリア -->
-
-            <!-- {% for tweet in tweet_list %} -->
-            <!-- <div class="d-flex flex-row pt-3 border-gray-bottom tweet">
-                <div class="w-10 d-flex justify-content-center align-items-start">
-                    <div>
-                        <img src="https://placehold.jp/50x50.png" class="rounded-5" alt="">
-                    </div>
-                </div>
-                <div class="w-90 h-75 pe-4">
-                    <div class="w-100 text-white fs-5">
-                        <p>{{ tweet.user.username}}</p>
-                    </div>
-                    <div class="text-white fs-4 ">
-                        <p class="" style="overflow-wrap: break-word;">{{tweet.sentense}}</p>
-                    </div>
-
-                    {% if tweet.image %}
-                    <div>
-                        <img class="rounded-3" src="{{ tweet.image.url }}" alt="..." width="559" height="292"/> -->
-                        <!-- <img src="https://placehold.jp/569x292.png" class="rounded-3"  alt="" style="background-size: cover;"> -->
-                    <!-- </div>
-                    {% endif %}
-                    <div class="color-gray fs-5 d-flex justify-content-between py-2">
-                        <i class="bi bi-chat"></i>
-                        <i class="bi bi-arrow-repeat"></i>
-                        <i class="bi bi-heart"></i>
-                        <i class="bi bi-bar-chart"></i>
-                        <i class="bi bi-bookmark"></i>
-                        <i class="bi bi-arrow-bar-up"></i>
-                    </div>
-                </div>
-                <div class="icons">
-                </div>
-            </div>
-            {% endfor %} -->
             {% for article in articles %}
             <div class="d-flex flex-row pt-3 border-gray-bottom tweet">
                 <div class="w-10 d-flex justify-content-center align-items-start">
@@ -208,9 +172,7 @@
 
                     {% if article.image %}
                     <div>
-                        <!-- <img class="rounded-3" src="{{ article.image.url }}" alt="..." width="559" height="292"/> -->
                         {% cloudinary article.image.name width=300 height=300 %}
-                        <!-- <img src="https://placehold.jp/569x292.png" class="rounded-3"  alt="" style="background-size: cover;"> -->
                     </div>
                     {% endif %}
                     <div class="color-gray fs-5 d-flex justify-content-between py-2">
@@ -259,5 +221,4 @@
 
 {% block javascripts %}
 <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-
 {% endblock %}
