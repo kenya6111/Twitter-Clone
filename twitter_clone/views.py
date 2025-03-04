@@ -2,10 +2,11 @@ from datetime import datetime
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser
+from twitter_clone.models import CustomUser, TweetModel, FollowModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
+from django.core.paginator import Paginator
 
 # ヘルパー関数
 def send_verification_email(user,code):
@@ -47,10 +48,7 @@ def signup_view(request):
                 custom_user.save()
 
             # 認証コードを生成
-            # authenticate_code= str(random.randint(100000,999999))
             authenticate_code= str(secrets.token_hex(16))
-            # email_verification = EmailVerificationModel(user=custom_user, code=authenticate_code)
-            # email_verification.save()
             custom_user.email_verifications.create(code=authenticate_code)
 
             # 認証コード付きメールを送信
@@ -160,4 +158,25 @@ def top_view(request):
     return render(request, 'twitter_clone/top.html')
 
 def main_view(request):
-    return render(request, 'twitter_clone/main.html')
+    tweet_list=[]
+    filter_type=''
+    filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
+    request.session['filtersession'] = filter_type
+
+    user = request.user
+    custom_user = CustomUser.objects.get(id=user.id)
+
+    if filter_type == 'foryou':
+        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+    elif filter_type == 'follow':
+        following_users = CustomUser.objects.filter(
+            id__in=custom_user.followings.values_list("follower_id", flat=True)
+        )
+        tweet_list = TweetModel.objects.filter(user__in=following_users).order_by('-created_at')
+    else:
+        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+    data_page = Paginator(tweet_list, 2)
+
+    p = request.GET.get('p')
+    articles = data_page.get_page(p)
+    return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})

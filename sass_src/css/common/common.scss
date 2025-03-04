@@ -18,6 +18,17 @@ color:rgb(99,104,108)
 border:1px solid rgb(112, 114, 119)
 }
 
+.border-gray-side{
+  border-left: 1px solid rgb(41, 45, 47);
+  border-right: 1px solid rgb(41, 45, 47);
+}
+.border-gray-bottom{
+  border-bottom: 1px solid rgb(41, 45, 47);
+}
+.color-gray{
+  color: rgb(41, 45, 47);
+}
+
 .w-40{
   width:40%
 }
@@ -60,4 +71,8 @@ font-size: 4.6rem;
 }
 .fs-title2{
 font-size: 2rem;
+}
+
+.bi {
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); // 影をつけて太く見せる
 }
