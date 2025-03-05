@@ -2,7 +2,7 @@ from datetime import datetime
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel, FollowModel
+from twitter_clone.models import CustomUser, TweetModel, FollowModel, RetweetModel, ReplyModel,LikeModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -180,3 +180,21 @@ def main_view(request):
     p = request.GET.get('p')
     articles = data_page.get_page(p)
     return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})
+
+def profile_view(request):
+    # logiｎユーザをCustomUserModelからとる
+    user = request.user
+    custom_user = CustomUser.objects.get(id=user.id)
+
+    #ログインユーザのツイートリストをとる
+    tweet_list_login_user = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+    #ログインユーザがいいねした投稿をとる
+    tweet_list_liked_by_login_user = LikeModel.objects.filter(user=custom_user).order_by('-created_at')
+
+    #ログインユーザがリツイートした投稿をとる
+    tweet_list_retweeted_by_login_user = RetweetModel.objects.filter(user=custom_user).order_by('-created_at')
+    #ログインユーザがコメントしたツイートをとる
+    tweet_list_commented_by_login_user = ReplyModel.objects.filter(user=custom_user).order_by('-created_at')
+
+    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'tweet_list_login_user':tweet_list_login_user,'tweet_list_liked_by_login_user':tweet_list_liked_by_login_user, 'tweet_list_retweeted_by_login_user':tweet_list_retweeted_by_login_user,'tweet_list_commented_by_login_user':tweet_list_commented_by_login_user })
+

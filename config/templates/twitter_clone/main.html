@@ -104,7 +104,7 @@
                     <a href="{% url 'account_login' %}" class="btn btn-light rounded-5 fw-bold w-85 h-4 btn-lg d-flex align-items-center justify-content-center" tabindex="-1" role="button" aria-disabled="true">Post</a>
                 </div>
                 <div class="me-2">
-                    <a href="{% url 'account_login' %}" class="btn btn-black rounded-5 fw-bold w-100 h-4 btn-lg d-flex align-items-center justify-content-start my-4" tabindex="-1" role="button" aria-disabled="true">
+                    <a href="{% url 'profile' %}" class="btn btn-black rounded-5 fw-bold w-100 h-4 btn-lg d-flex align-items-center justify-content-start my-4" tabindex="-1" role="button" aria-disabled="true">
                         <img src="https://placehold.jp/50x50.png" class="rounded-5" alt="">
                         <div class="ms-2">
                             <h5 class="text-light fs-6 mt-3">猫猫🐈🐈🐈</h5>
@@ -135,7 +135,9 @@
             <!-- 投稿エリア -->
             <div class="h-10 d-flex flex-row border-gray-bottom">
                 <div class="w-10 d-flex justify-content-center align-items-start pt-3">
+                    <a href="{% url 'profile' %}">
                         <img src="https://placehold.jp/50x50.png" class="rounded-5" alt="">
+                    </a>
                 </div>
                 <div class="w-90 h-75 pe-4">
                     <div class="w-100 h-75 border-gray-bottom">

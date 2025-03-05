@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load cloudinary %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<style>
+  .row{
+    padding-right:0;
+    padding-left:0;
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+
+  }
+  .navbar{
+    --bs-navbar-padding-x: 0;
+    --bs-navbar-padding-y: 0;
+  }
+  .h-20{
+    height:20%;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+ログイン判定：{{ request.user.is_authenticated }}
+ログインユーザ：{{request.user}}
+ログインユーザID：{{request.user.id}}
+ログインユーザemail;{{request.user.email}}
+<div class="w-100 h-100 bg-top-parent">
+    <!-- ヘッダー -->
+    <div class="d-flex flex-row align-items-center border-gray-bottom p-2">
+      <div class="ms-5 me-auto">
+          <i class="bi bi-twitter-x text-white fs-2"></i>
+          <span class="text-white fs-5">Twitterクローン</span>
+      </div>
+      {% if user.is_authenticated %}
+      <div class="me-2">
+          <a href="{% url 'account_logout' %}" class="btn btn-primary fw-bold " tabindex="-1" role="button" aria-disabled="true">ログアウト</a>
+      </div>
+      {% else %}
+      <div class="me-2">
+          <a href="{% url 'account_login' %}" class="btn btn-primary  fw-bold " tabindex="-1" role="button" aria-disabled="true">ログイン</a>
+      </div>
+      <div class="me-2">
+          <a href="{% url 'account_signup' %}" class="btn btn-primary fw-bold " tabindex="-1" role="button" aria-disabled="true">新規登録</a>
+      </div>
+      {% endif %}
+  </div>
+  <!-- メインコンテンツ -->
+  <div class="row menu-container">
+      <!-- サイドバー（左） -->
+      <div class="col-4 d-flex justify-content-end">
+          <div class="text-white w-50 ps-5 d-flex flex-column">
+              <div class="mt-3">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-house-door-fill fs-2"></i>
+                      <span class="fw-bold ms-2 fs-5">Home</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-search fs-3"></i>
+                      <span class="ms-2 fs-5">Explore</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-bell  fs-3"></i>
+                      <span class="ms-2 fs-5">Notifications</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-envelope  fs-3"></i>
+                      <span class="ms-2 fs-5">Messages</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-bookmark  fs-3"></i>
+                      <span class="ms-2 fs-5">Bookmarks</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-duffle  fs-3"></i>
+                      <span class="ms-2 fs-5">Jobs</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-people fs-3"></i>
+                      <span class="ms-2 fs-5">Communities</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-patch-check  fs-3"></i>
+                      <span class="ms-2 fs-5">Premium</span>
+                  </a>
+              </div>
+              <div class="mt-2">
+                  <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+                      <i class="bi bi-person  fs-3"></i>
+                      <span class="ms-2 fs-5">Profile</span>
+                  </a>
+              </div>
+
+              <div class="mt-auto">
+                  <a href="{% url 'account_login' %}" class="btn btn-light rounded-5 fw-bold w-85 h-4 btn-lg d-flex align-items-center justify-content-center" tabindex="-1" role="button" aria-disabled="true">Post</a>
+              </div>
+              <div class="me-2">
+                  <a href="{% url 'profile' %}" class="btn btn-black rounded-5 fw-bold w-100 h-4 btn-lg d-flex align-items-center justify-content-start my-4" tabindex="-1" role="button" aria-disabled="true">
+                      <img src="https://placehold.jp/50x50.png" class="rounded-5" alt="">
+                      <div class="ms-2">
+                          <h5 class="text-light fs-6 mt-3">猫猫🐈🐈🐈</h5>
+                          <h5 class="fs-6">@kenya009008674</h5>
+                      </div>
+                  </a>
+              </div>
+          </div>
+
+      </div>
+      <!-- センターバー -->
+      <div class="col-4 border-gray-side">
+        <!-- ユーザ名＋戻るボタン -->
+        <div class="fs-5 d-flex justify-content-start align-items-start pt-3 ps-3 ">
+          <a href="{% url 'top' %}">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+          <a href="{% url 'profile' %}" class="ms-3">
+            {{request.user}}
+          </a>
+        </div>
+        <!--トップ画像 -->
+        <div class="bg-primary h-25 w-100">
+        </div>
+        <!--プロフィール情報欄 -->
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
+
+        </div>
+
+        <!-- おすすめorフォロータブ -->
+        <nav class="navbar navbar-expand-lg border-gray-bottom">
+            <div class="container-fluid h-100">
+                <div class="collapse navbar-collapse h-100" id="navbarNav">
+                    <ul class="navbar-nav w-100 h-100">
+                        <li id="post-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                            <a class="nav-link active text-white fw-bold text-center" href="{% url 'profile' %}?filter=post">Posts</a>
+                        </li>
+                        <li id="comment-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                            <a class="nav-link active text-white fw-bold text-center" href="{% url 'profile' %}?filter=comment">Comments</a>
+                        </li>
+                        <li id="retweet-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                            <a class="nav-link active text-white fw-bold text-center" href="{% url 'profile' %}?filter=retweet">Retweets</a>
+                        </li>
+                        <li id="like-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                            <a class="nav-link active text-white fw-bold text-center" href="{% url 'profile' %}?filter=liket">Likes</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- タイムライン -->
+        {% for article in articles %}
+        <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
+            <div class="w-10 d-flex justify-content-center align-items-start">
+                <div>
+                    <img src="https://placehold.jp/50x50.png" class="rounded-5" alt="">
+                </div>
+            </div>
+            <div class="w-90 h-75 pe-4">
+                <div class="w-100 text-white fs-6">
+                    <p>{{ article.user.username}}</p>
+                </div>
+                <div class="text-white fs-5 ">
+                    <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+                </div>
+
+                {% if article.image %}
+                <div>
+                    {% cloudinary article.image.name width=300 height=300 %}
+                </div>
+                {% endif %}
+                <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                    <i class="bi bi-chat"></i>
+                    <i class="bi bi-arrow-repeat"></i>
+                    <i class="bi bi-heart"></i>
+                    <i class="bi bi-bar-chart"></i>
+                    <i class="bi bi-bookmark"></i>
+                    <i class="bi bi-arrow-bar-up"></i>
+                </div>
+            </div>
+            <div class="icons">
+            </div>
+        </div>
+        {% endfor %}
+
+        <nav aria-label="..." class="mt-3">
+            <ul class="pagination d-flex justify-content-center">
+                {% if articles.has_previous %}
+                    <li class="page-item">
+                        <!-- 前のページへのリンク -->
+                        <a href="?p={{ articles.previous_page_number }}" class="page-link">前へ</a>
+                    </li>
+                {% endif %}
+
+                {% for article in articles.paginator.page_range %}
+                    <li class="page-item">
+                        <a class="page-link" href="?p={{ forloop.counter }}">{{forloop.counter}}</a>
+                    </li>
+                {% endfor %}
+
+                <!-- 次のページへのリンク -->
+                {% if articles.has_next %}
+                    <li class="page-item">
+                        <a href="?p={{ articles.next_page_number }}" class="page-link">次へ</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+      <!-- サイドバー（右） -->
+      <div class="col-4">
+      </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}
