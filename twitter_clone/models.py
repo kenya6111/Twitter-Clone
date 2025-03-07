@@ -48,7 +48,7 @@ class CustomUser(AbstractUser):
 class EmailVerificationModel(BaseModel):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='email_verification', null=True, blank=True)
     code = models.CharField(max_length=6)
-    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+
     class Meta:
         db_table = "email_verifications"
 
@@ -59,8 +59,7 @@ class TweetModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tweet', null=False, blank=True)
     sentense = models.TextField(max_length=270)
     image = models.ImageField(upload_to='images', null=True, blank=True)
-    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
-    # updated_at = models.DateTimeField(auto_now=True,blank=True,null=True)
+
     class Meta:
         db_table = "tweets"
 
@@ -110,6 +109,6 @@ class ReplyModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='replies')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField(max_length=270)
-    # created_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         db_table = "replies"
