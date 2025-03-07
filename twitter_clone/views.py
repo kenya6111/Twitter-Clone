@@ -182,19 +182,25 @@ def main_view(request):
     return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})
 
 def profile_view(request):
-    # logiｎユーザをCustomUserModelからとる
     user = request.user
     custom_user = CustomUser.objects.get(id=user.id)
+    
+    tweet_list=[]
+    filter_type=''
+    filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
+    request.session['filtersession'] = filter_type
 
-    #ログインユーザのツイートリストをとる
-    tweet_list_login_user = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
-    #ログインユーザがいいねした投稿をとる
-    tweet_list_liked_by_login_user = LikeModel.objects.filter(user=custom_user).order_by('-created_at')
-
-    #ログインユーザがリツイートした投稿をとる
-    tweet_list_retweeted_by_login_user = RetweetModel.objects.filter(user=custom_user).order_by('-created_at')
-    #ログインユーザがコメントしたツイートをとる
-    tweet_list_commented_by_login_user = ReplyModel.objects.filter(user=custom_user).order_by('-created_at')
-
-    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'tweet_list_login_user':tweet_list_login_user,'tweet_list_liked_by_login_user':tweet_list_liked_by_login_user, 'tweet_list_retweeted_by_login_user':tweet_list_retweeted_by_login_user,'tweet_list_commented_by_login_user':tweet_list_commented_by_login_user })
+    if filter_type == 'post':
+        tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+    elif filter_type == 'comment':
+        tweet_list = TweetModel.objects.filter(replies__user=custom_user).order_by('-created_at')
+        # tweet_list = TweetModel.replies.filter(user=user)
+    elif filter_type == 'retweet':
+        tweet_list = TweetModel.objects.filter(retweets__user=custom_user).order_by('-created_at')
+    elif filter_type == 'like':
+        # tweet_list = LikeModel.objects.filter(user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(likes__user=custom_user).order_by('-created_at')
+    else:
+        tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+    return render(request, 'twitter_clone/profile.html', {'login_user':custom_user, 'tweet_list':tweet_list })
 

@@ -19,9 +19,12 @@ class CustomUser(AbstractUser):
     # user_name = models.CharField(max_length=50,blank=True, null=True)
     email = models.EmailField(max_length=100, null=False, unique=True)
     tel = models.EmailField(max_length=100,blank=True, null=True)
-    date_of_birth = models.EmailField(max_length=100,blank=True, null=True)
+    date_of_birth = models.CharField(max_length=100,blank=True, null=True)
     image = models.ImageField(upload_to='images', verbose_name='イメージ画像', null=True, blank=True)
-    # age = models.IntegerField('年齢', blank=True, null=True)
+    introduction=models.TextField(blank=True, null=True)
+    head_image=models.ImageField(upload_to='images', verbose_name='イメージ画像_ヘッダー', null=True, blank=True)
+    place = models.TextField(max_length=500,blank=True, null=True)
+    web_site = models.CharField(max_length=100,blank=True, null=True)
 
     @classmethod
     def is_valid_email(email):
