@@ -107,6 +107,9 @@
     background-color: black;
     height:1500px;
   }
+  .head-image img {
+    object-fit: cover;
+  }
 
 </style>
 {% endblock %}
@@ -227,7 +230,7 @@
         <!--トップ画像 -->
         <div class="position-relative h-20 w-100">
           {% if custom_user.head_image %}
-          <div class="position-relative h-100 h-100">
+          <div class="head-image position-relative h-100 h-100">
             {% cloudinary custom_user.head_image.name class="w-100 h-100 position-absolute top-50 start-50 translate-middle" cloud_name='dfgwcq4cj' %}
           </div>
           {% endif %}
