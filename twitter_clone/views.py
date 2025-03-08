@@ -179,11 +179,11 @@ def main_view(request):
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles})
 
 def profile_view(request):
-    user = request.user
-    custom_user = CustomUser.objects.get(id=user.id)
+    user_id= request.GET.get("user-id")
+    custom_user = CustomUser.objects.get(id=user_id)
     tweet_list=[]
     filter_type=''
     filter_type = request.GET.get("filter") or request.session.get('filtersession', '')

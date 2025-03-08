@@ -313,7 +313,7 @@
                 </div>
 
                 {% if article.image %}
-                <a href="{% url 'profile' %}">
+                <a href="{% url 'profile' %}?user-id={{ article.user.id}}">
                     {% cloudinary article.image.name width=300 height=300 cloud_name='dfgwcq4cj'%}
                 </a>
                 {% endif %}
