@@ -3,6 +3,7 @@ import os
 
 from pathlib import Path
 import logging
+import cloudinary
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -54,8 +55,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary_storage',
     'cloudinary',
+    'cloudinary_storage',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -200,9 +201,23 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+cloudinary.config(
+    cloud_name=env("CLOUDINARY_NAME"),
+    api_key=env("CLOUDINARY_API_KEY"),
+    api_secret=env("CLOUDINARY_API_SECRET")
+)
+print(222)
+print(os.getenv("CLOUDINARY_NAME"))
+
+
 #setting.pyの最後に追加でOK
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME':env('CLOUDINARY_NAME'),
     'API_KEY': env('CLOUDINARY_API_KEY'),
     'API_SECRET': env('CLOUDINARY_API_SECRET')
 }
+
+
+print('CLOUD_NAME!!!!!!!'+env('CLOUDINARY_NAME'))
+print('CLOUDINARY_API_KEY!!!!!!!'+env('CLOUDINARY_API_KEY'))
+print('CLOUDINARY_API_SECRET!!!!!!!'+env('CLOUDINARY_API_SECRET'))

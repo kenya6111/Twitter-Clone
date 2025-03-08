@@ -231,13 +231,13 @@
         <div class="position-relative h-20 w-100">
           {% if custom_user.head_image %}
           <div class="head-image position-relative h-100 h-100">
-            {% cloudinary custom_user.head_image.name class="w-100 h-100 position-absolute top-50 start-50 translate-middle" cloud_name='dfgwcq4cj' %}
+            {% cloudinary custom_user.head_image.name class="w-100 h-100 position-absolute top-50 start-50 translate-middle"  %}
           </div>
           {% endif %}
 
           {% if custom_user.image %}
           <div >
-            {% cloudinary custom_user.image.name class="rounded-circle profile-img position-absolute" cloud_name='dfgwcq4cj' %}
+            {% cloudinary custom_user.image.name class="rounded-circle profile-img position-absolute"  %}
           </div>
           {% else %}
             <img src="https://placehold.jp/130x130.png" class="profile-img rounded-circle position-absolute" alt="">
@@ -303,7 +303,7 @@
         <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
             <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
                 <a href="{% url 'profile' %}?user-id={{ article.user.id}}" >
-                    {% cloudinary custom_user.image.name class="rounded-circle w-100 h-100" cloud_name='dfgwcq4cj' %}
+                    {% cloudinary custom_user.image.name class="rounded-circle w-100 h-100"  %}
                     <!-- <img src="https://placehold.jp/50x50.png" class="rounded-5" alt=""> -->
                 </a>
             </div>
@@ -317,7 +317,7 @@
 
                 {% if article.image %}
                 <div>
-                    {% cloudinary article.image.name width=300 height=300 cloud_name='dfgwcq4cj'%}
+                    {% cloudinary article.image.name width=300 height=300 %}
                 </div>
                 {% endif %}
                 <div class="color-gray fs-6 d-flex justify-content-between py-2">
