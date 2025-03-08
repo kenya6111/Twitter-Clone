@@ -203,5 +203,5 @@ def profile_view(request):
     data_page = Paginator(tweet_list, 2)
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/profile.html', {'login_user':custom_user, 'articles':articles})
+    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles})
 
