@@ -198,8 +198,12 @@
         <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
             <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
                 <a href="{% url 'profile' %}?user-id={{ article.user.id}}" >
-                    {% cloudinary custom_user.image.name class="rounded-circle w-100 h-100"  %}
-                    <!-- <img src="https://placehold.jp/50x50.png" class="rounded-5" alt=""> -->
+                    <!-- {% cloudinary article.user.image.name class="rounded-circle w-100 h-100"  %} -->
+                    {% if article.user.image %}
+                        {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
+                    {% else %}
+                        <img src="https://placehold.jp/50x50.png" class="rounded-circle w-100 h-100" alt="Default profile">
+                    {% endif %}
                 </a>
             </div>
             <div class="w-90 h-75 pe-4">

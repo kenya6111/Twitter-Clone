@@ -21,8 +21,8 @@ class CustomUser(AbstractUser):
     tel = models.EmailField(max_length=100,blank=True, null=True)
     date_of_birth = models.CharField(max_length=100,blank=True, null=True)
     image = models.ImageField(upload_to='images', verbose_name='イメージ画像', null=True, blank=True)
-    introduction=models.TextField(blank=True, null=True)
-    head_image=models.ImageField(upload_to='images', verbose_name='イメージ画像_ヘッダー', null=True, blank=True)
+    introduction = models.TextField(blank=True, null=True)
+    head_image = models.ImageField(upload_to='images', verbose_name='イメージ画像_ヘッダー', null=True, blank=True)
     place = models.TextField(max_length=500,blank=True, null=True)
     web_site = models.CharField(max_length=100,blank=True, null=True)
 
