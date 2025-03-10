@@ -20,19 +20,16 @@
     <div class="alert alert-success" role="alert">{{ message }}
     </div>
 {% endfor %}
-{% endif %}ｓ
+{% endif %}
 <div class="w-100 h-100 bg-top-parent">
     <!-- ヘッダー -->
     {% block header %}
-        {% include "components/header.html" %}
+        {% include 'components/header.html' %}
     {% endblock %}
     <!-- メインコンテンツ -->
     <div class="row menu-container">
-        {% block header %}
-            {% include "components/header.html" %}
-        {% endblock %}
-
-        <!-- <div class="col-4 d-flex justify-content-end">
+        <!-- サイドバー -->
+        <div class="col-4 d-flex justify-content-end">
             <div class="text-white w-50 ps-5 d-flex flex-column">
                 <div class="mt-3">
                     <a href="{% url 'main' %}" class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
@@ -99,13 +96,12 @@
                             {% cloudinary login_user.image.name class="rounded-circle w-100 h-100" %}
                         </div>
                         <div class="ms-2">
-                            <h5 class="text-light fs-6 mt-3">猫猫🐈🐈🐈</h5>
+                            <h5 class="text-light fs-6 mt-3">猫猫ｓ</h5>
                             <h5 class="fs-6">@kenya009008674</h5>
                         </div>
                     </a>
                 </div>
-            </div> -->
-
+            </div>
         </div>
         <!-- センターバー -->
         <div class="col-4 border-gray-side">
