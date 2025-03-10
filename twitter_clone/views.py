@@ -185,7 +185,6 @@ def profile_view(request):
     user_id= request.GET.get("user-id")
     custom_user = CustomUser.objects.get(id=user_id)
     tweet_list=[]
-    filter_type=''
     filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
     request.session['filtersession'] = filter_type
 
