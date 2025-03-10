@@ -182,9 +182,9 @@ def main_view(request):
     return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles})
 
 def profile_view(request):
-    user_id= request.GET.get("user-id")
+    user_id = request.GET.get("user-id")
     custom_user = CustomUser.objects.get(id=user_id)
-    tweet_list=[]
+    tweet_list =[]
     filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
     request.session['filtersession'] = filter_type
 
