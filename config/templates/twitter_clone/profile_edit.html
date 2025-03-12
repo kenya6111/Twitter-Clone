@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load cloudinary %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<style>
+  .bg-signup-parent{
+    background-color: rgb(32,40,48);
+}
+.bg-signup-modal{
+    background-color: rgb(0,0,0);
+}
+.border-gray{
+    border:1px solid rgb(45,47,50)
+}
+.text-gray{
+    color:rgb(99,104,108)
+}
+.width{
+    width:600px !important;
+}
+.height{
+    height:700px !important;
+}
+
+.test{
+    background-color:black !important;
+}
+
+/* フォーカス時や値が入力されているとき */
+input:focus + .floating-label,
+input:not(:placeholder-shown) + .floating-label {
+    top: 0px;
+    left: 3px;
+    font-size: 0.9rem;
+}
+.form-floating > .form-control:not(:placeholder-shown) ~ label::after,
+.form-floating > .form-control:focus ~ label::after {
+    background-color: rgb(0, 0, 0);
+}
+.form-floating > .form-control-plaintext ~ label,
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+color:rgb(99,104,108);
+transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+.select-date > span {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.75rem;
+    font-size: 0.9rem;
+}
+input:-webkit-autofill {
+    transition: background-color 10000s ease-in-out 0s;
+    -webkit-text-fill-color: white !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+<div class="w-100 h-100 bg-top-parent">
+    <!-- ヘッダー -->
+    {% include 'components/header.html' %}
+    <!-- メインコンテンツ -->
+    <div class="row container bg-top-parent mx-auto mt-4">
+      <form class="m-3 needs-validation" action="{% url 'profile_edit' %}" method="POST" novalidate> {% csrf_token %}
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">{{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}
+        <!-- ヘッダー画像 -->
+        <!-- プロフィール画像 -->
+        <!-- ユーザ名 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="username" id="id_login" placeholder="" autocomplete="off" value={{ custom_user.username}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>ユーザ名</label>
+            <div class="invalid-feedback">
+                ユーザネームを入力してください。
+            </div>
+        </div>
+        <!-- 自己紹介 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="introduction" id="id_login2" placeholder="" autocomplete="off" value={{ custom_user.introduction}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>自己紹介</label>
+            <div class="invalid-feedback">
+                自己紹介を入力してください。
+            </div>
+        </div>
+        <!-- 住所 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="place" id="id_login3" placeholder="" autocomplete="off" value={{ custom_user.place}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>住所</label>
+            <div class="invalid-feedback">
+                住所を入力してください。
+            </div>
+        </div>
+        <!-- URL -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="web_site" id="id_login4" placeholder="" autocomplete="off" value={{ custom_user.web_site}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>Webサイト</label>
+            <div class="invalid-feedback">
+                WebサイトURLを入力してください。
+            </div>
+        </div>
+        <!-- 誕生日 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="birth" id="id_login5" placeholder="" autocomplete="off" value={{ custom_user.date_of_birth}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>誕生日
+            </label>
+            <div class="invalid-feedback">
+                誕生日を入力してください。
+            </div>
+        </div>
+        <input type="hidden" name="user_id" value={{custom_user.id}}>
+        <button class="btn rounded-5 d-block w-25 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">登録</button>
+        <a href="{% url 'profile' %}?user_id={{custom_user.id }}" class="btn rounded-5 d-block w-25 py-3 bg-black text-white mx-auto fw-bold mt-4 border border-white " type="submit">戻る</a>
+      </form>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}

@@ -51,7 +51,7 @@
             </a>
         </div>
         <div class="mt-2">
-            <a href="{% url 'profile' %}?user-id={{login_user.id}}" class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+            <a href="{% url 'profile' %}?user_id={{login_user.id}}" class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
                 <i class="bi bi-person  fs-3"></i>
                 <span class="ms-2 fs-5">Profile</span>
             </a>
@@ -61,7 +61,7 @@
             <a href="{% url 'account_login' %}" class="btn btn-light rounded-5 fw-bold w-85 h-4 btn-lg d-flex align-items-center justify-content-center" tabindex="-1" role="button" aria-disabled="true">Post</a>
         </div>
         <div class="me-2">
-            <a href="{% url 'profile' %}?user-id={{login_user.id}}" class="btn btn-black rounded-5 fw-bold w-100 h-4 btn-lg d-flex align-items-center justify-content-start my-4" tabindex="-1" role="button" aria-disabled="true">
+            <a href="{% url 'profile' %}?user_id={{login_user.id}}" class="btn btn-black rounded-5 fw-bold w-100 h-4 btn-lg d-flex align-items-center justify-content-start my-4" tabindex="-1" role="button" aria-disabled="true">
                 <!-- <img src="https://placehold.jp/50x50.png" class="rounded-5" alt=""> -->
                 <div class="w-20">
                     {% cloudinary login_user.image.name class="rounded-circle w-100 h-100" %}

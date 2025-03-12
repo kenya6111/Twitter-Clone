@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.shortcuts import render,redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
 from twitter_clone.models import CustomUser, TweetModel
@@ -7,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
 from django.core.paginator import Paginator
+from urllib.parse import urlencode
 
 # ヘルパー関数
 def send_verification_email(user,code):
@@ -182,7 +184,7 @@ def main_view(request):
     return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles})
 
 def profile_view(request):
-    user_id = request.GET.get("user-id")
+    user_id = request.GET.get("user_id")
     custom_user = CustomUser.objects.get(id=user_id)
     tweet_list =[]
     filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
@@ -203,4 +205,38 @@ def profile_view(request):
     p = request.GET.get('p')
     articles = data_page.get_page(p)
     return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles})
+
+def profile_edit_view(request):
+    user_id = request.GET.get("user_id")
+    print("~~~~~~")
+    print(user_id)
+    custom_user=""
+
+    print(custom_user)
+    if request.method == 'POST':
+        try:
+            user_id = request.POST.get("user_id", None)
+            print("POST!!!!!: "+user_id)
+            custom_user = CustomUser.objects.get(id=user_id)
+            print(122222)
+            custom_user.username = request.POST.get("username", None)
+            custom_user.introduction = request.POST.get("introduction", None)
+            custom_user.place = request.POST.get("place", None)
+            custom_user.web_site = request.POST.get("web_site", None)
+            custom_user.birth = request.POST.get("birth", None)
+            print(1111)
+            custom_user.save()
+
+            redirect_url = reverse('profile')
+            parameters = urlencode({'user_id': user_id})
+            url = f'{redirect_url}?{parameters}'
+            # return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
+            return redirect(url)
+        except Exception:
+            return render(request,'twitter_clone/profile.html')
+    else:
+        custom_user = CustomUser.objects.get(id=user_id)
+
+
+    return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
 

@@ -53,7 +53,7 @@
             <div class="d-flex flex-rowh-25">
                 <div class="w-100">
                     <div class="w-100 d-flex justify-content-end">
-                        <a href="#" class="btn fs-6 rounded-5 text-white bg-black border-gray w-25 d-flex align-items-center justify-content-center mt-3 me-3 edit-button" tabindex="-1" role="button" aria-disabled="true">
+                        <a href="{% url 'profile_edit' %}?user_id={{ custom_user.id}} " class="btn fs-6 rounded-5 text-white bg-black border-gray w-25 d-flex align-items-center justify-content-center mt-3 me-3 edit-button" tabindex="-1" role="button" aria-disabled="true">
                             Edit profile
                         </a>
                     </div>
@@ -89,16 +89,16 @@
                     <div class="collapse navbar-collapse h-100" id="navbarNav">
                         <ul class="navbar-nav w-100 h-100">
                             <li id="post-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
-                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=post&user-id={{custom_user.id}}">Posts</a>
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=post&user_id={{custom_user.id}}">Posts</a>
                             </li>
                             <li id="comment-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
-                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=comment&user-id={{custom_user.id}}">Comments</a>
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=comment&user_id={{custom_user.id}}">Comments</a>
                             </li>
                             <li id="retweet-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
-                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=retweet&user-id={{custom_user.id}}">Retweets</a>
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=retweet&user_id={{custom_user.id}}">Retweets</a>
                             </li>
                             <li id="like-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
-                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=like&user-id={{custom_user.id}}">Likes</a>
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=like&user_id={{custom_user.id}}">Likes</a>
                             </li>
                         </ul>
                     </div>
@@ -108,7 +108,7 @@
             {% for article in articles %}
     <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
         <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
-            <a href="{% url 'profile' %}?user-id={{ article.user.id}}" >
+            <a href="{% url 'profile' %}?user_id={{ article.user.id}}" >
                 <!-- {% cloudinary article.user.image.name class="rounded-circle w-100 h-100"  %} -->
                 {% if article.user.image %}
                 {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
@@ -149,20 +149,20 @@
             {% if articles.has_previous %}
             <li class="page-item">
                 <!-- 前のページへのリンク -->
-                <a href="?p={{ articles.previous_page_number }}&user-id={{custom_user.id}}" class="page-link">前へ</a>
+                <a href="?p={{ articles.previous_page_number }}&user_id={{custom_user.id}}" class="page-link">前へ</a>
             </li>
             {% endif %}
             
             {% for article in articles.paginator.page_range %}
             <li class="page-item">
-                <a class="page-link" href="?p={{ forloop.counter }}&user-id={{custom_user.id}}">{{forloop.counter}}</a>
+                <a class="page-link" href="?p={{ forloop.counter }}&user_id={{custom_user.id}}">{{forloop.counter}}</a>
             </li>
             {% endfor %}
             
             <!-- 次のページへのリンク -->
             {% if articles.has_next %}
             <li class="page-item">
-                <a href="?p={{ articles.next_page_number }}&user-id={{custom_user.id}}" class="page-link">次へ</a>
+                <a href="?p={{ articles.next_page_number }}&user_id={{custom_user.id}}" class="page-link">次へ</a>
             </li>
             {% endif %}
         </ul>
