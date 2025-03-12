@@ -11,3 +11,109 @@
 .mw-test{
     min-width:1090px;
 }
+
+
+
+.row{
+    padding-right:0;
+    padding-left:0;
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+
+}
+.navbar{
+--bs-navbar-padding-x: 0;
+--bs-navbar-padding-y: 0;
+}
+.h-20{
+height:20%;
+}
+
+.menu-container {
+height: calc(100vh - 85px); /* ヘッダーの高さ分を引く */
+}
+.nav-item:hover{
+background-color: rgba(23,23,24,1)!important;
+}
+
+
+.tweet:hover{
+    background-color: rgba(23,23,24,1)!important;
+}
+
+.side-btn {
+    display: inline-block !important;  /* aタグの幅を内容に応じて可変に */
+    width: auto !important;            /* 必要な幅だけ確保 */
+    padding: 0.5rem 1rem;              /* ボタン内の余白を調整 */
+    text-align: left;                  /* アイコンとテキストの配置を調整 */
+}
+
+.side-btn:hover{
+    background-color: rgba(23,23,24,1)!important;
+}
+.navbar {
+    --bs-navbar-padding-y: 0;
+}
+
+.container-fluid {
+    padding-right:0;
+    padding-left:0;
+}
+.h-6{
+    height:6%;
+}
+
+.w-20{
+    width:20%;
+}
+.w-7{
+    width:7%;
+}
+
+
+.w-85{
+    width:85%;
+}
+
+.w-10{
+    width:15%;
+}
+.w-15{
+    width:15%;
+}
+.w-90{
+    width:90%;
+}
+
+.h-4{
+    height:4rem
+}
+.btn-black:hover{
+    background-color: rgba(23,23,24,1)!important;
+}
+
+
+a {
+text-decoration: none;
+color:#fff;
+}
+.profile-img {
+left: 15%; /* 親要素の中央に配置 */
+bottom: -65px; /* 高さの半分（130px/2）を下にずらす */
+transform: translateX(-50%); /* 水平方向の中央揃え */
+border: 4px solid #000; /* 枠線をつける（オプション） */
+width: 25%;
+}
+.edit-button{
+max-width: 126px;
+}
+.navbar-nav .nav-link {
+color:rgb(99,104,108)!important
+}
+.bg-top-parent{
+background-color: black;
+height:1500px;
+}
+.head-image img {
+object-fit: cover;
+}

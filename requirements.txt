@@ -17,3 +17,4 @@ requests==2.32.3
 pillow==11.1.0
 django-extensions==3.2.3
 django-cloudinary-storage==0.3.0
+psycopg2-binary==2.9.10

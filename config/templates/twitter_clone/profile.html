@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load cloudinary %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% sass_src 'css/top.scss' %}" />
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+<div class="w-100 h-100 bg-top-parent">
+    <!-- ヘッダー -->
+    {% include 'components/header.html' %}
+    <!-- メインコンテンツ -->
+    <div class="row menu-container bg-top-parent">
+        {% include 'components/sidebar.html' %}
+        <!-- センターバー -->
+        <div class="col-4 border-gray-side">
+            <!-- ユーザ名＋戻るボタン -->
+            <div class="fs-5 d-flex justify-content-start align-items-start pt-3 ps-3 ">
+                <a href="{% url 'main' %}">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <a href="{% url 'profile' %}" class="ms-3">
+                    {{custom_user.username}}
+                </a>
+            </div>
+            <!--トップ画像 -->
+            <div class="position-relative h-20 w-100">
+                {% if custom_user.head_image %}
+                <div class="head-image position-relative h-100 h-100">
+                    {% cloudinary custom_user.head_image.name class="w-100 h-100 position-absolute top-50 start-50 translate-middle"  %}
+                </div>
+                {% endif %}
+
+                {% if custom_user.image %}
+                <div >
+                    {% cloudinary custom_user.image.name class="rounded-circle profile-img position-absolute"  %}
+                </div>
+                {% else %}
+                <img src="https://placehold.jp/130x130.png" class="profile-img rounded-circle position-absolute" alt="">
+                {% endif %}
+            </div>
+            <!--プロフィール情報欄 -->
+            <div class="d-flex flex-rowh-25">
+                <div class="w-100">
+                    <div class="w-100 d-flex justify-content-end">
+                        <a href="#" class="btn fs-6 rounded-5 text-white bg-black border-gray w-25 d-flex align-items-center justify-content-center mt-3 me-3 edit-button" tabindex="-1" role="button" aria-disabled="true">
+                            Edit profile
+                        </a>
+                    </div>
+                    <div class="text-white mx-3 mt-3 fs-5">
+                        {{ custom_user.username }}
+                    </div>
+                    <div class="text-white mx-3 mt-1 fs-6">
+                        <p> {{ custom_user.introduction}} </p>
+                    </div>
+                    <div class="text-gray d-flex flex-row mx-3 mt-1">
+                        <div class="d-flex flex-row">
+                            <i class="bi bi-geo-alt"></i>
+                            <p class="ms-1">{{custom_user.place}}</p>
+                        </div>
+                        <div class="d-flex flex-row ms-2">
+                            <i class="bi bi-link-45deg"></i>
+                            <p class="ms-1">{{custom_user.web_site}}</p>
+                        </div>
+                        <div class="d-flex flex-row ms-2">
+                            <i class="bi bi-balloon"></i>
+                            <p class="ms-1">{{custom_user.date_of_birth}}</p>
+                        </div>
+                    </div>
+                    <div class="mx-3 mt-1 d-flex justify-content-">
+                        <p class="me-2"><span class="text-white">166 </span> <span class="text-gray"> Following</span></p>
+                        <p><span class="text-white">166 </span> <span class="text-gray"> Followers</span></p>
+                    </div>
+                </div>
+            </div>
+            <!-- おすすめorフォロータブ -->
+            <nav class="navbar navbar-expand-lg border-gray-bottom">
+                <div class="container-fluid h-100">
+                    <div class="collapse navbar-collapse h-100" id="navbarNav">
+                        <ul class="navbar-nav w-100 h-100">
+                            <li id="post-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=post&user-id={{custom_user.id}}">Posts</a>
+                            </li>
+                            <li id="comment-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=comment&user-id={{custom_user.id}}">Comments</a>
+                            </li>
+                            <li id="retweet-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=retweet&user-id={{custom_user.id}}">Retweets</a>
+                            </li>
+                            <li id="like-tab" class="nav-item w-25 d-flex align-items-center justify-content-center">
+                                <a class="nav-link active text-white text-center" href="{% url 'profile' %}?filter=like&user-id={{custom_user.id}}">Likes</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- タイムライン -->
+            {% for article in articles %}
+    <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
+        <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
+            <a href="{% url 'profile' %}?user-id={{ article.user.id}}" >
+                <!-- {% cloudinary article.user.image.name class="rounded-circle w-100 h-100"  %} -->
+                {% if article.user.image %}
+                {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
+                {% else %}
+                <img src="https://placehold.jp/50x50.png" class="rounded-circle w-100 h-100" alt="Default profile">
+                {% endif %}
+            </a>
+        </div>
+        <div class="w-90 h-75 pe-4">
+            <div class="w-100 text-white fs-6">
+                <p>{{ article.user.username}}</p>
+            </div>
+            <div class="text-white fs-5 ">
+                <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+            </div>
+            
+            {% if article.image %}
+            <div>
+                {% cloudinary article.image.name width=300 height=300 %}
+            </div>
+            {% endif %}
+            <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                <i class="bi bi-chat"></i>
+                <i class="bi bi-arrow-repeat"></i>
+                <i class="bi bi-heart"></i>
+                <i class="bi bi-bar-chart"></i>
+                <i class="bi bi-bookmark"></i>
+                <i class="bi bi-arrow-bar-up"></i>
+            </div>
+        </div>
+        <div class="icons">
+        </div>
+    </div>
+    {% endfor %}
+
+    <nav aria-label="..." class="mt-3">
+        <ul class="pagination d-flex justify-content-center">
+            {% if articles.has_previous %}
+            <li class="page-item">
+                <!-- 前のページへのリンク -->
+                <a href="?p={{ articles.previous_page_number }}&user-id={{custom_user.id}}" class="page-link">前へ</a>
+            </li>
+            {% endif %}
+            
+            {% for article in articles.paginator.page_range %}
+            <li class="page-item">
+                <a class="page-link" href="?p={{ forloop.counter }}&user-id={{custom_user.id}}">{{forloop.counter}}</a>
+            </li>
+            {% endfor %}
+            
+            <!-- 次のページへのリンク -->
+            {% if articles.has_next %}
+            <li class="page-item">
+                <a href="?p={{ articles.next_page_number }}&user-id={{custom_user.id}}" class="page-link">次へ</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <!-- サイドバー（右） -->
+    <div class="col-4">
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}

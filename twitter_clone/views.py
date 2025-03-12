@@ -2,7 +2,7 @@ from datetime import datetime
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel, FollowModel
+from twitter_clone.models import CustomUser, TweetModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -179,4 +179,28 @@ def main_view(request):
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/main.html', {'tweet_list':tweet_list,'articles': articles})
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles})
+
+def profile_view(request):
+    user_id = request.GET.get("user-id")
+    custom_user = CustomUser.objects.get(id=user_id)
+    tweet_list =[]
+    filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
+    request.session['filtersession'] = filter_type
+
+    if filter_type == 'post':
+        tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+    elif filter_type == 'comment':
+        tweet_list = TweetModel.objects.filter(replies__user=custom_user).order_by('-created_at')
+    elif filter_type == 'retweet':
+        tweet_list = TweetModel.objects.filter(retweets__user=custom_user).order_by('-created_at')
+    elif filter_type == 'like':
+        tweet_list = TweetModel.objects.filter(likes__user=custom_user).order_by('-created_at')
+    else:
+        tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+
+    data_page = Paginator(tweet_list, 2)
+    p = request.GET.get('p')
+    articles = data_page.get_page(p)
+    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles})
+
