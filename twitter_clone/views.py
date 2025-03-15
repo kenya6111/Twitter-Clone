@@ -9,6 +9,7 @@ import secrets
 from django.contrib.auth.hashers import make_password,check_password
 from django.core.paginator import Paginator
 from urllib.parse import urlencode
+from cloudinary.uploader import upload
 
 # ヘルパー関数
 def send_verification_email(user,code):
@@ -208,29 +209,28 @@ def profile_view(request):
 
 def profile_edit_view(request):
     user_id = request.GET.get("user_id")
-    print("~~~~~~")
-    print(user_id)
     custom_user=""
 
-    print(custom_user)
     if request.method == 'POST':
         try:
             user_id = request.POST.get("user_id", None)
-            print("POST!!!!!: "+user_id)
             custom_user = CustomUser.objects.get(id=user_id)
-            print(122222)
             custom_user.username = request.POST.get("username", None)
             custom_user.introduction = request.POST.get("introduction", None)
             custom_user.place = request.POST.get("place", None)
             custom_user.web_site = request.POST.get("web_site", None)
             custom_user.birth = request.POST.get("birth", None)
-            print(1111)
+            if 'head-image' in request.FILES:
+                uploaded_head_image = upload(request.FILES['head-image'])
+                custom_user.head_image = uploaded_head_image['secure_url']
+            if 'image' in request.FILES:
+                uploaded_image = upload(request.FILES['image'])
+                custom_user.image = uploaded_image['secure_url']
             custom_user.save()
-
             redirect_url = reverse('profile')
             parameters = urlencode({'user_id': user_id})
             url = f'{redirect_url}?{parameters}'
-            # return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
+
             return redirect(url)
         except Exception:
             return render(request,'twitter_clone/profile.html')

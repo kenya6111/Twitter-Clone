@@ -7,8 +7,8 @@
 
 {% block styles %}
 <style>
-  .bg-signup-parent{
-    background-color: rgb(32,40,48);
+.bg-signup-parent{
+  background-color: rgb(32,40,48);
 }
 .bg-signup-modal{
     background-color: rgb(0,0,0);
@@ -29,6 +29,7 @@
 .test{
     background-color:black !important;
 }
+
 
 /* フォーカス時や値が入力されているとき */
 input:focus + .floating-label,
@@ -59,6 +60,21 @@ input:-webkit-autofill {
     transition: background-color 10000s ease-in-out 0s;
     -webkit-text-fill-color: white !important;
 }
+
+.head-image img {
+  object-fit: cover;
+}
+
+.profile-img {
+  left: 3%;
+  border: 4px solid #000;
+  width: 100%;
+}
+
+.w-13{
+  width:13%;
+}
+
 </style>
 {% endblock %}
 
@@ -73,8 +89,8 @@ input:-webkit-autofill {
     <!-- ヘッダー -->
     {% include 'components/header.html' %}
     <!-- メインコンテンツ -->
-    <div class="row container bg-top-parent mx-auto mt-4">
-      <form class="m-3 needs-validation" action="{% url 'profile_edit' %}" method="POST" novalidate> {% csrf_token %}
+    <div class="row container bg-top-parent mx-auto mt-2">
+      <form class="m-3 needs-validation gap-4" action="{% url 'profile_edit' %}" method="POST" enctype="multipart/form-data" novalidate> {% csrf_token %}
         {% if messages %}
         {% for message in messages %}
             <div class="alert alert-danger" role="alert">{{ message }}
@@ -82,6 +98,33 @@ input:-webkit-autofill {
         {% endfor %}
         {% endif %}
         <!-- ヘッダー画像 -->
+        <div class="head-image position-relative h-25 mb-2 rounded">
+          {% if custom_user.head_image %}
+            {% cloudinary custom_user.head_image.name class="w-75 h-75 position-absolute top-50 start-50 translate-middle" id="head-image" %}
+          {% else %}
+            <img src="https://placehold.jp/130x130.png" onerror="this.style.display='none'" class="w-50 h-50 position-absolute top-50 start-50 translate-middle" id="head-image" alt="">
+          {% endif %}
+          <label for="file-upload-head-image" class="position-absolute top-50 start-50 translate-middle " style="cursor: pointer;">
+            <i class="bi bi-camera fs-1 text-white"></i>
+          </label>
+          <!-- 非表示のファイルアップロードボタン -->
+          <input type="file" id="file-upload-head-image" name="head-image" class="d-none">
+        </div>
+
+        <div class="head-image position-relative h-25 w-13 mb-2 rounded-circle">
+          {% if custom_user.image %}
+            {% cloudinary custom_user.image.name class="rounded-circle profile-img" id="image" %}
+          {% else %}
+            <img src="https://placehold.jp/130x130.png" onerror="this.style.display='none'" class="profile-img rounded-circle position-absolute" id="image" alt="">
+          {% endif %}
+            <!-- カメラアイコン（プロフィール画像の中央） -->
+          <label for="file-upload-image" class="position-absolute top-50 start-50 translate-middle " style="cursor: pointer;">
+            <i class="bi bi-camera fs-1 text-white"></i>
+          </label>
+          <!-- 非表示のファイルアップロードボタン -->
+          <input type="file" id="file-upload-image" name="image" class="d-none">
+        </div>
+
         <!-- プロフィール画像 -->
         <!-- ユーザ名 -->
         <div class="form-floating mb-4">
@@ -133,4 +176,22 @@ input:-webkit-autofill {
 
 {% block javascripts %}
 <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+<script>
+  window.addEventListener("load", function () {
+    //ファイルアップロード時
+    document.getElementById("file-upload-head-image").addEventListener('change', (e)=>{
+        //画像がアップロードされている場合
+        if(e.target.files.length > 0 ){
+            document.getElementById("head-image").src =  URL.createObjectURL(e.target.files[0]);
+        }
+    })
+    document.getElementById("file-upload-image").addEventListener('change', (e)=>{
+        //画像がアップロードされている場合
+        if(e.target.files.length > 0 ){
+            document.getElementById("image").src =  URL.createObjectURL(e.target.files[0]);
+        }
+    })
+});
+
+</script>
 {% endblock %}
