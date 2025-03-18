@@ -46,7 +46,7 @@
                 </div>
             </nav>
             <!-- 投稿エリア -->
-            <div class="h-10 d-flex flex-row border-gray-bottom">
+            <form action="{% url 'tweet' %}" method="POST" class="h-10 d-flex flex-row border-gray-bottom" enctype="multipart/form-data"> {% csrf_token %}
                 <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
                     <a href="{% url 'profile' %}?user_id={{login_user.id}}">
                         {% cloudinary login_user.image.name class="rounded-circle w-100 h-100" %}
@@ -54,7 +54,7 @@
                 </div>
                 <div class="w-90 h-75 pe-4">
                     <div class="w-100 h-75 border-gray-bottom">
-                        <textarea type="textarea" id="post-area" class="w-100 h-75 fs-5 bg-black border border-black text-white" placeholder="What is happening!?" maxlength="270"></textarea>
+                        <textarea type="textarea" id="post-area" name="tweet-sentence" class="w-100 h-75 fs-5 bg-black border border-black text-white" placeholder="What is happening!?" maxlength="140"></textarea>
                     </div>
                     <div class="d-flex justify-content-between my-2">
                         <div class="d-flex align-items-center">
@@ -62,16 +62,20 @@
                             <i class="bi bi-calendar text-primary fs-5 me-3"></i>
                             <i class="bi bi-emoji-smile text-primary fs-5 me-3"></i>
                             <i class="bi bi-filetype-gif text-primary fs-5 me-3"></i>
-                            <i class="bi bi-image text-primary fs-5 me-3"></i>
+                            <label for="file-upload-tweet-image" class="" style="cursor: pointer;">
+                                <i class="bi bi-image text-primary fs-5 me-3"></i>
+                            </label>
+                            <input type="file" id="file-upload-tweet-image" name="tweet-image" class="d-none">
+                            <input type="text" id="user_id" name="user_id" class="d-none" value={{ login_user.id}}>
                         </div>
                         <div class="w-20">
-                            <a href="{% url 'account_login' %}" class="btn btn-light rounded-5 fw-bold  fs-6 w-100 btn-lg d-flex align-items-center justify-content-center" tabindex="-1" role="button" aria-disabled="true">
+                            <button type="submit" class="btn btn-light rounded-5 fw-bold  fs-6 w-100 btn-lg d-flex align-items-center justify-content-center" tabindex="-1" role="button" aria-disabled="true">
                                 Post
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
             <!-- タイムライン -->
             {% for article in articles %}
             <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
