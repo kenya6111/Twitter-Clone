@@ -249,7 +249,8 @@ def tweet_view(request):
         if 'tweet-image' in request.FILES:
             uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
             tweet_image = uploaded_tweet_image['secure_url']
-        tweet = TweetModel(user=custom_user, sentense=tweet_sentence, image=tweet_image)
-        tweet.save()
+        # tweet = TweetModel(user=custom_user, sentense=tweet_sentence, image=tweet_image)
+        # tweet.save()
+        TweetModel.objects.create(user=custom_user, sentense=tweet_sentence, image=tweet_image)
     return redirect('main')
 
