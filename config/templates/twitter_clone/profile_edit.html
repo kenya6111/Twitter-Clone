@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load cloudinary %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% sass_src 'css/profile-edit.scss' %}" />
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+<div class="w-100 h-100 bg-top-parent">
+    <!-- ヘッダー -->
+    {% include 'components/header.html' %}
+    <!-- メインコンテンツ -->
+    <div class="row container bg-top-parent mx-auto mt-2">
+      <form class="m-3 needs-validation gap-4" action="{% url 'profile_edit' %}" method="POST" enctype="multipart/form-data" novalidate> {% csrf_token %}
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">{{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}
+        <!-- ヘッダー画像 -->
+        <div class="head-image position-relative h-25 mb-2 rounded">
+          {% if custom_user.head_image %}
+            {% cloudinary custom_user.head_image.name class="w-75 h-75 position-absolute top-50 start-50 translate-middle" id="head-image" %}
+          {% else %}
+            <img src="https://placehold.jp/130x130.png" onerror="this.style.display='none'" class="w-50 h-50 position-absolute top-50 start-50 translate-middle" id="head-image" alt="">
+          {% endif %}
+          <label for="file-upload-head-image" class="position-absolute top-50 start-50 translate-middle " style="cursor: pointer;">
+            <i class="bi bi-camera fs-1 text-white"></i>
+          </label>
+          <!-- 非表示のファイルアップロードボタン -->
+          <input type="file" id="file-upload-head-image" name="head-image" class="d-none">
+        </div>
+
+        <div class="head-image position-relative h-25 w-13 mb-2 rounded-circle">
+          {% if custom_user.image %}
+            {% cloudinary custom_user.image.name class="rounded-circle profile-img" id="image" %}
+          {% else %}
+            <img src="https://placehold.jp/130x130.png" onerror="this.style.display='none'" class="profile-img rounded-circle position-absolute" id="image" alt="">
+          {% endif %}
+            <!-- カメラアイコン（プロフィール画像の中央） -->
+          <label for="file-upload-image" class="position-absolute top-50 start-50 translate-middle " style="cursor: pointer;">
+            <i class="bi bi-camera fs-1 text-white"></i>
+          </label>
+          <!-- 非表示のファイルアップロードボタン -->
+          <input type="file" id="file-upload-image" name="image" class="d-none">
+        </div>
+
+        <!-- プロフィール画像 -->
+        <!-- ユーザ名 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="username" id="id_login" placeholder="" autocomplete="off" value={{ custom_user.username}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>ユーザ名</label>
+            <div class="invalid-feedback">
+                ユーザネームを入力してください。
+            </div>
+        </div>
+        <!-- 自己紹介 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="introduction" id="id_login2" placeholder="" autocomplete="off" value={{ custom_user.introduction}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>自己紹介</label>
+            <div class="invalid-feedback">
+                自己紹介を入力してください。
+            </div>
+        </div>
+        <!-- 住所 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="place" id="id_login3" placeholder="" autocomplete="off" value={{ custom_user.place}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>住所</label>
+            <div class="invalid-feedback">
+                住所を入力してください。
+            </div>
+        </div>
+        <!-- URL -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="web_site" id="id_login4" placeholder="" autocomplete="off" value={{ custom_user.web_site}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>Webサイト</label>
+            <div class="invalid-feedback">
+                WebサイトURLを入力してください。
+            </div>
+        </div>
+        <!-- 誕生日 -->
+        <div class="form-floating mb-4">
+            <input type="email" class="text-white bg-black form-control border-gray" name="birth" id="id_login5" placeholder="" autocomplete="off" value={{ custom_user.date_of_birth}} required>
+            <label for="id_login" class="text-gray form-label floating-label" required>誕生日
+            </label>
+            <div class="invalid-feedback">
+                誕生日を入力してください。
+            </div>
+        </div>
+        <input type="hidden" name="user_id" value={{custom_user.id}}>
+        <button class="btn rounded-5 d-block w-25 py-3 bg-white text-black mx-auto fw-bold mt-5 " type="submit">登録</button>
+        <a href="{% url 'profile' %}?user_id={{custom_user.id }}" class="btn rounded-5 d-block w-25 py-3 bg-black text-white mx-auto fw-bold mt-4 border border-white " type="submit">戻る</a>
+      </form>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/profileEdit.js' %}"></script>
+{% endblock %}
