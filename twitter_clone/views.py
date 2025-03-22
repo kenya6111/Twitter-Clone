@@ -240,3 +240,17 @@ def profile_edit_view(request):
 
     return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
 
+def tweet_view(request):
+    if request.method == 'POST':
+        tweet_sentence = request.POST.get("tweet-sentence", None)
+        user_id = request.POST.get("user_id", None)
+        custom_user = CustomUser.objects.get(id=user_id)
+        tweet_image=""
+        if 'tweet-image' in request.FILES:
+            uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
+            tweet_image = uploaded_tweet_image['secure_url']
+        # tweet = TweetModel(user=custom_user, sentense=tweet_sentence, image=tweet_image)
+        # tweet.save()
+        TweetModel.objects.create(user=custom_user, sentense=tweet_sentence, image=tweet_image)
+    return redirect('main')
+
