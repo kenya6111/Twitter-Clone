@@ -239,6 +239,42 @@ def profile_edit_view(request):
 
 
     return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
+def tweet_detail_view(request):
+    tweet_id = request.GET.get("tweet_id")
+    tweet = TweetModel.objects.get(id=tweet_id)
+
+    user = request.user
+    custom_user = CustomUser.objects.get(id=user.id)
+
+    # if request.method == 'POST':
+    #     try:
+    #         user_id = request.POST.get("user_id", None)
+    #         custom_user = CustomUser.objects.get(id=user_id)
+    #         custom_user.username = request.POST.get("username", None)
+    #         custom_user.introduction = request.POST.get("introduction", None)
+    #         custom_user.place = request.POST.get("place", None)
+    #         custom_user.web_site = request.POST.get("web_site", None)
+    #         custom_user.birth = request.POST.get("birth", None)
+    #         if 'head-image' in request.FILES:
+    #             uploaded_head_image = upload(request.FILES['head-image'])
+    #             custom_user.head_image = uploaded_head_image['secure_url']
+    #         if 'image' in request.FILES:
+    #             uploaded_image = upload(request.FILES['image'])
+    #             custom_user.image = uploaded_image['secure_url']
+    #         custom_user.save()
+    #         redirect_url = reverse('profile')
+    #         parameters = urlencode({'user_id': user_id})
+    #         url = f'{redirect_url}?{parameters}'
+
+    #         return redirect(url)
+    #     except Exception:
+    #         return render(request,'twitter_clone/profile.html')
+    # else:
+    #     custom_user = CustomUser.objects.get(id=user_id)
+
+
+    # return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
+    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":custom_user})
 
 def tweet_view(request):
     if request.method == 'POST':

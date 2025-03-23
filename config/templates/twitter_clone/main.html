@@ -78,36 +78,39 @@
             </form>
             <!-- タイムライン -->
             {% for article in articles %}
-            <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
-                <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
-                    <a href="{% url 'profile' %}?user_id={{article.user.id}}">
-                        {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
-                    </a>
+            <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}">
+                <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
+
+                    <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
+                        <span onClick="moveToProfile('{% url 'profile' %}?user_id={{article.user.id}}',event)">
+                            {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
+                        </span>
+                    </div>
+                    <div class="w-90 h-75 pe-4">
+                        <div class="w-100 text-white fs-6 fw-bold">
+                            <p>{{ article.user.username}}</p>
+                        </div>
+                        <div class="text-white fs-5 ">
+                            <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+                        </div>
+                        {% if article.image %}
+                        <div>
+                            {% cloudinary article.image.name width=300 height=300 %}
+                        </div>
+                        {% endif %}
+                        <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                            <i class="bi bi-chat"></i>
+                            <i class="bi bi-arrow-repeat"></i>
+                            <i class="bi bi-heart"></i>
+                            <i class="bi bi-bar-chart"></i>
+                            <i class="bi bi-bookmark"></i>
+                            <i class="bi bi-arrow-bar-up"></i>
+                        </div>
+                    </div>
+                    <div class="icons">
+                    </div>
                 </div>
-                <div class="w-90 h-75 pe-4">
-                    <div class="w-100 text-white fs-6 fw-bold">
-                        <p>{{ article.user.username}}</p>
-                    </div>
-                    <div class="text-white fs-5 ">
-                        <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
-                    </div>
-                    {% if article.image %}
-                    <div>
-                        {% cloudinary article.image.name width=300 height=300 %}
-                    </div>
-                    {% endif %}
-                    <div class="color-gray fs-6 d-flex justify-content-between py-2">
-                        <i class="bi bi-chat"></i>
-                        <i class="bi bi-arrow-repeat"></i>
-                        <i class="bi bi-heart"></i>
-                        <i class="bi bi-bar-chart"></i>
-                        <i class="bi bi-bookmark"></i>
-                        <i class="bi bi-arrow-bar-up"></i>
-                    </div>
-                </div>
-                <div class="icons">
-                </div>
-            </div>
+            </a>
             {% endfor %}
 
             <nav aria-label="..." class="mt-3">
