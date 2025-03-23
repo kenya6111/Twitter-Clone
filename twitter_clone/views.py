@@ -169,15 +169,18 @@ def main_view(request):
     user = request.user
     custom_user = CustomUser.objects.get(id=user.id)
 
+    # 返信に使われているツイートのID一覧
+    reply_tweet_ids = ReplyModel.objects.values_list('reply_tweet_id', flat=True)
+
     if filter_type == 'foryou':
-        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
     elif filter_type == 'follow':
         following_users = CustomUser.objects.filter(
             id__in=custom_user.followings.values_list("follower_id", flat=True)
         )
-        tweet_list = TweetModel.objects.filter(user__in=following_users).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).order_by('-created_at')
     else:
-        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
     data_page = Paginator(tweet_list, 2)
 
     p = request.GET.get('p')
