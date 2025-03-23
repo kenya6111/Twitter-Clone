@@ -107,8 +107,8 @@ class RetweetModel(BaseModel):
 
 class ReplyModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='replies')
-    origin_tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='origin_tweets', null=True, blank=True)
-    reply_tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='reply_tweets', null=True, blank=True)
+    origin_tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='origin_tweets')
+    reply_tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='reply_tweets')
 
     class Meta:
         db_table = "replies"
