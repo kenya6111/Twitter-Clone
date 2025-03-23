@@ -243,9 +243,11 @@ def profile_edit_view(request):
 
     return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
 def tweet_detail_view(request):
+    user = request.user
+    login_user = CustomUser.objects.get(id=user.id)
+    origin_tweet_id=""
+
     if request.method == 'POST':
-        user = request.user
-        login_user = CustomUser.objects.get(id=user.id)
 
         origin_tweet_id = request.POST.get("tweet_id", None)
         tweet = TweetModel.objects.get(id=origin_tweet_id)
@@ -255,35 +257,25 @@ def tweet_detail_view(request):
         if 'tweet-image' in request.FILES:
             uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
             tweet_image = uploaded_tweet_image['secure_url']
+
         reply_tweet = TweetModel.objects.create(user=login_user, sentense=tweet_sentence, image=tweet_image)
         ReplyModel.objects.create(user=tweet.user, origin_tweet=tweet, reply_tweet=reply_tweet)
-
 
         url = reverse('tweet_detail')
         parameters = urlencode({"tweet_id":origin_tweet_id})
         return redirect(f'{url}?{parameters}')
 
-    tweet_id = request.GET.get("tweet_id")
+    origin_tweet_id = request.GET.get("tweet_id")
 
-    # 元ツイートを取得
-    tweet = TweetModel.objects.get(id=tweet_id)
+    tweet = TweetModel.objects.get(id=origin_tweet_id)
 
-    # ログインユーザを取得
-    user = request.user
-    custom_user = CustomUser.objects.get(id=user.id)
-
-    # リプライのツイートを取得
     reply_list = ReplyModel.objects.filter(origin_tweet=tweet).order_by('-created_at')
 
     data_page = Paginator(reply_list, 2)
     p = request.GET.get('p')
-
     replies = data_page.get_page(p)
 
-
-
-    # return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
-    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":custom_user,"replies":replies})
+    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":login_user,"replies":replies})
 
 def tweet_view(request):
     if request.method == 'POST':
