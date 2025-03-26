@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -181,11 +181,15 @@ def main_view(request):
         tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).order_by('-created_at')
     else:
         tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
+
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    print(liked_article_ids)
+
     data_page = Paginator(tweet_list, 2)
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles})
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids})
 
 def profile_view(request):
     user_id = request.GET.get("user_id")
@@ -205,10 +209,12 @@ def profile_view(request):
     else:
         tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
 
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+
     data_page = Paginator(tweet_list, 2)
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles})
+    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles,"liked_article_ids":liked_article_ids})
 
 def profile_edit_view(request):
     user_id = request.GET.get("user_id")
@@ -271,11 +277,13 @@ def tweet_detail_view(request):
 
     reply_list = ReplyModel.objects.filter(origin_tweet=tweet).order_by('-created_at')
 
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+
     data_page = Paginator(reply_list, 2)
     p = request.GET.get('p')
     replies = data_page.get_page(p)
 
-    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":login_user,"replies":replies})
+    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":login_user,"replies":replies,"liked_article_ids":liked_article_ids})
 
 def tweet_view(request):
     if request.method == 'POST':
@@ -286,8 +294,17 @@ def tweet_view(request):
         if 'tweet-image' in request.FILES:
             uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
             tweet_image = uploaded_tweet_image['secure_url']
-        # tweet = TweetModel(user=custom_user, sentense=tweet_sentence, image=tweet_image)
-        # tweet.save()
+
         TweetModel.objects.create(user=custom_user, sentense=tweet_sentence, image=tweet_image)
     return redirect('main')
+
+def like_view(request):
+
+    
+    if request.method == 'POST':
+        print(1)
+    return redirect('main')
+
+
+
 
