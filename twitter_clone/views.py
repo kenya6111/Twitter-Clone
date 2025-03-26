@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -169,15 +169,18 @@ def main_view(request):
     user = request.user
     custom_user = CustomUser.objects.get(id=user.id)
 
+    # 返信に使われているツイートのID一覧
+    reply_tweet_ids = ReplyModel.objects.values_list('reply_tweet_id', flat=True)
+
     if filter_type == 'foryou':
-        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
     elif filter_type == 'follow':
         following_users = CustomUser.objects.filter(
             id__in=custom_user.followings.values_list("follower_id", flat=True)
         )
-        tweet_list = TweetModel.objects.filter(user__in=following_users).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).order_by('-created_at')
     else:
-        tweet_list = TweetModel.objects.all().order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
     data_page = Paginator(tweet_list, 2)
 
     p = request.GET.get('p')
@@ -194,7 +197,7 @@ def profile_view(request):
     if filter_type == 'post':
         tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
     elif filter_type == 'comment':
-        tweet_list = TweetModel.objects.filter(replies__user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(reply_tweets__user=custom_user).order_by('-created_at')
     elif filter_type == 'retweet':
         tweet_list = TweetModel.objects.filter(retweets__user=custom_user).order_by('-created_at')
     elif filter_type == 'like':
@@ -239,6 +242,40 @@ def profile_edit_view(request):
 
 
     return render(request, 'twitter_clone/profile_edit.html', {'custom_user':custom_user})
+def tweet_detail_view(request):
+    user = request.user
+    login_user = CustomUser.objects.get(id=user.id)
+    origin_tweet_id=""
+
+    if request.method == 'POST':
+
+        origin_tweet_id = request.POST.get("tweet_id", None)
+        tweet = TweetModel.objects.get(id=origin_tweet_id)
+
+        tweet_sentence = request.POST.get("tweet-sentence", None)
+        tweet_image=""
+        if 'tweet-image' in request.FILES:
+            uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
+            tweet_image = uploaded_tweet_image['secure_url']
+
+        reply_tweet = TweetModel.objects.create(user=login_user, sentense=tweet_sentence, image=tweet_image)
+        ReplyModel.objects.create(user=tweet.user, origin_tweet=tweet, reply_tweet=reply_tweet)
+
+        url = reverse('tweet_detail')
+        parameters = urlencode({"tweet_id":origin_tweet_id})
+        return redirect(f'{url}?{parameters}')
+
+    origin_tweet_id = request.GET.get("tweet_id")
+
+    tweet = TweetModel.objects.get(id=origin_tweet_id)
+
+    reply_list = ReplyModel.objects.filter(origin_tweet=tweet).order_by('-created_at')
+
+    data_page = Paginator(reply_list, 2)
+    p = request.GET.get('p')
+    replies = data_page.get_page(p)
+
+    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":login_user,"replies":replies})
 
 def tweet_view(request):
     if request.method == 'POST':

@@ -9,5 +9,6 @@ urlpatterns = [
     path('main/', views.main_view, name='main'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit', views.profile_edit_view, name='profile_edit'),
-    path('tweet', views.tweet_view, name='tweet')
+    path('tweet', views.tweet_view, name='tweet'),
+    path('tweet_detail', views.tweet_detail_view, name='tweet_detail')
 ]
