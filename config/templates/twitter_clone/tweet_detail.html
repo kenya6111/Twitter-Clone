@@ -40,7 +40,7 @@
               </p>
           </div>
 
-          <!-- ツイート詳エリア -->
+          <!-- ツイート詳細エリア -->
           <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
 
             <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
@@ -63,7 +63,11 @@
                 <div class="color-gray fs-6 d-flex justify-content-between py-2">
                     <i class="bi-chat"></i>
                     <i class="bi-arrow-repeat"></i>
-                    <i class="bi-heart"></i>
+                    {% if article.id in liked_article_ids %}
+                    <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'tweet_detail',{{login_user.id}}, {{article.id}} )"><span class="ms-1">{{article.likes__count}}</i>
+                    {% else %}
+                        <i class="bi-heart" onclick="like(event,{{article.id}},'tweet_detail',{{login_user.id}}, {{article.id}})"><span class="ms-1">{{article.likes__count}}</i>
+                    {% endif %}
                     <i class="bi-bar-chart"></i>
                     <i class="bi-bookmark"></i>
                     <i class="bi-arrow-bar-up"></i>
@@ -130,10 +134,14 @@
                         <i class="bi-chat"></i>
                         <i class="bi-arrow-repeat"></i>
 
-                        {% if article.id in liked_article_ids %}
-                        <i class="bi-heart" style="color:red;"></i>
+                        {% if reply.reply_tweet.id in liked_article_ids %}
+                            <span onclick="disLike(event, {{ reply.reply_tweet.id }}, 'tweet_detail',{{login_user.id}}, {{article.id}} )">
+                                <i class="bi-heart" style="color:red;"><span class="ms-1">{{reply.like_count}}</span></i>
+                            </span>
                         {% else %}
-                            <i class="bi-heart"></i>
+                        <span onclick="like(event,{{reply.reply_tweet.id}},'tweet_detail',{{login_user.id}}, {{article.id}})">
+                            <i class="bi-heart"><span class="ms-1">{{reply.like_count}}</span></i>
+                        </span>
                         {% endif %}
                         <i class="bi-bar-chart"></i>
                         <i class="bi-bookmark"></i>
