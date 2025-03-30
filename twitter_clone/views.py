@@ -3,13 +3,15 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
 from django.core.paginator import Paginator
 from urllib.parse import urlencode
 from cloudinary.uploader import upload
+from django.http.response import JsonResponse
+from django.db.models import Count
 
 # ヘルパー関数
 def send_verification_email(user,code):
@@ -171,44 +173,49 @@ def main_view(request):
 
     # 返信に使われているツイートのID一覧
     reply_tweet_ids = ReplyModel.objects.values_list('reply_tweet_id', flat=True)
-
     if filter_type == 'foryou':
-        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-updated_at')
     elif filter_type == 'follow':
         following_users = CustomUser.objects.filter(
             id__in=custom_user.followings.values_list("follower_id", flat=True)
         )
-        tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-created_at')
     else:
-        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-updated_at')
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+
     data_page = Paginator(tweet_list, 2)
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles})
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids})
 
 def profile_view(request):
     user_id = request.GET.get("user_id")
+    if request.method == 'POST':
+        user_id = request.POST.get("user_id")
     custom_user = CustomUser.objects.get(id=user_id)
     tweet_list =[]
     filter_type = request.GET.get("filter") or request.session.get('filtersession', '')
     request.session['filtersession'] = filter_type
 
     if filter_type == 'post':
-        tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user=custom_user).annotate(Count("likes")).order_by('-created_at')
     elif filter_type == 'comment':
-        tweet_list = TweetModel.objects.filter(reply_tweets__user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(reply_tweets__user=custom_user).annotate(Count("likes")).order_by('-created_at')
     elif filter_type == 'retweet':
-        tweet_list = TweetModel.objects.filter(retweets__user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(retweets__user=custom_user).annotate(Count("likes")).order_by('-created_at')
     elif filter_type == 'like':
-        tweet_list = TweetModel.objects.filter(likes__user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(likes__user=custom_user).annotate(Count("likes")).order_by('-created_at')
     else:
-        tweet_list = TweetModel.objects.filter(user=custom_user).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user=custom_user).annotate(Count("likes")).order_by('-created_at')
+
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
     data_page = Paginator(tweet_list, 2)
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles})
+    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles,"liked_article_ids":liked_article_ids})
 
 def profile_edit_view(request):
     user_id = request.GET.get("user_id")
@@ -268,14 +275,17 @@ def tweet_detail_view(request):
     origin_tweet_id = request.GET.get("tweet_id")
 
     tweet = TweetModel.objects.get(id=origin_tweet_id)
+    display_tweet = TweetModel.objects.filter(id=origin_tweet_id).annotate(Count("likes"))
 
-    reply_list = ReplyModel.objects.filter(origin_tweet=tweet).order_by('-created_at')
+    reply_list = ReplyModel.objects.filter(origin_tweet=tweet).annotate(like_count=Count("reply_tweet__likes")).order_by('-created_at')
+
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
     data_page = Paginator(reply_list, 2)
     p = request.GET.get('p')
     replies = data_page.get_page(p)
 
-    return render(request, 'twitter_clone/tweet_detail.html',{"article":tweet, "login_user":login_user,"replies":replies})
+    return render(request, 'twitter_clone/tweet_detail.html',{"article":display_tweet[0], "login_user":login_user,"replies":replies,"liked_article_ids":liked_article_ids})
 
 def tweet_view(request):
     if request.method == 'POST':
@@ -286,8 +296,24 @@ def tweet_view(request):
         if 'tweet-image' in request.FILES:
             uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
             tweet_image = uploaded_tweet_image['secure_url']
-        # tweet = TweetModel(user=custom_user, sentense=tweet_sentence, image=tweet_image)
-        # tweet.save()
+
         TweetModel.objects.create(user=custom_user, sentense=tweet_sentence, image=tweet_image)
     return redirect('main')
+
+def like_view(request):
+    if request.method == 'POST':
+        tweet_id = request.POST.get("tweet_id", None)
+        user_id = request.POST.get("user_id", None)
+        tweet = TweetModel.objects.get(id=tweet_id)
+        custom_user = CustomUser.objects.get(id=user_id)
+
+        exist_record= LikeModel.objects.filter(user=custom_user, tweet=tweet).first()
+
+        if exist_record:
+            exist_record.delete()
+            return JsonResponse({'is_registered': False})
+        else:
+            LikeModel.objects.create(user=custom_user, tweet=tweet)
+            return JsonResponse({'is_registered': True})
+
 
