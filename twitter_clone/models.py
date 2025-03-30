@@ -15,8 +15,6 @@ class CustomUser(AbstractUser):
     class Meta(AbstractUser.Meta):
         db_table = 'users'
 
-
-    # user_name = models.CharField(max_length=50,blank=True, null=True)
     email = models.EmailField(max_length=100, null=False, unique=True)
     tel = models.EmailField(max_length=100,blank=True, null=True)
     date_of_birth = models.CharField(max_length=100,blank=True, null=True)
@@ -57,8 +55,10 @@ class EmailVerificationModel(BaseModel):
 
 class TweetModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tweet', null=False, blank=True)
-    sentense = models.TextField(max_length=270)
+    sentense = models.TextField(max_length=270, null=True, blank=True)
     image = models.ImageField(upload_to='images', null=True, blank=True)
+    is_retweet = models.BooleanField(default=False)
+    retweet = models.ForeignKey("TweetModel", on_delete=models.CASCADE,default='',null=True, blank=True)
 
     class Meta:
         db_table = "tweets"
@@ -66,7 +66,6 @@ class TweetModel(BaseModel):
 class FollowModel(BaseModel):
     follower = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followers')
     following = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='followings')
-    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
         db_table = "follows"
@@ -80,7 +79,6 @@ class FollowModel(BaseModel):
 class LikeModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='likes')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='likes')
-    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
         db_table = "likes"
@@ -94,7 +92,6 @@ class LikeModel(BaseModel):
 class RetweetModel(BaseModel):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='retweets')
     tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='retweets')
-    # created_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
         db_table = "retweets"

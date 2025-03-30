@@ -80,40 +80,100 @@
             {% for article in articles %}
             <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}">
                 <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
+                    {% if article.is_retweet %}
+                        <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
+                            <span onClick="moveToProfile('{% url 'profile' %}?user_id={{article.user.id}}',event)">
+                                {% cloudinary article.retweet.user.image.name class="rounded-circle w-100 h-100" %}
+                            </span>
+                        </div>
+                        <div class="w-90 h-75 pe-4">
+                            <div class="w-100 text-white fs-6 fw-bold">
+                                {% if article.is_retweet %}
+                                    <p>{{ article.user.username }}がリツイート</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-white fs-5 ">
+                                {% if article.retweet.sentense %}
+                                    <p class="" style="overflow-wrap: break-word;">{{article.retweet.sentense}}</p>
+                                {% endif %}
+                            </div>
+                            {% if article.retweet.image %}
+                            <div>
+                                {% cloudinary article.retweet.image.name width=300 height=300 %}
+                            </div>
+                            {% endif %}
+                            <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                                <i class="bi-chat"></i>
+                                {% if article.retweet.id in retweet_article_ids %}
+                                    <i class="bi-arrow-repeat" style="color:green;" onclick="disRetweet(event, {{ article.retweet.id }}, 'main',{{login_user.id}},{{article.id}}, null )"></i>
+                                {% else %}
+                                    <i class="bi-arrow-repeat" onclick="retweet(event, {{ article.retweet.id }}, 'main',{{login_user.id}}, null )"></i>
+                                {% endif %}
 
-                    <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
-                        <span onClick="moveToProfile('{% url 'profile' %}?user_id={{article.user.id}}',event)">
-                            {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
-                        </span>
-                    </div>
-                    <div class="w-90 h-75 pe-4">
-                        <div class="w-100 text-white fs-6 fw-bold">
-                            <p>{{ article.user.username}}</p>
+                                {% if article.retweet.id in liked_article_ids %}
+                                    <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'main',{{login_user.id}}, null )"><span class="ms-1">{{article.likes__count}}</span></i>
+                                {% else %}
+                                    <i class="bi-heart" onclick="like(event,{{article.id}},'main',{{login_user.id}}, null)"><span class="ms-1">{{article.likes__count}}</span></i>
+                                {% endif %}
+                                <i class="bi-bar-chart"></i>
+                                <i class="bi-bookmark"></i>
+                                <i class="bi-arrow-bar-up"></i>
+                            </div>
                         </div>
-                        <div class="text-white fs-5 ">
-                            <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+                        <div class="icons">
                         </div>
-                        {% if article.image %}
-                        <div>
-                            {% cloudinary article.image.name width=300 height=300 %}
+                    {% else %}
+                        <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
+                            <span onClick="moveToProfile('{% url 'profile' %}?user_id={{article.user.id}}',event)">
+                                {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
+                            </span>
                         </div>
-                        {% endif %}
-                        <div class="color-gray fs-6 d-flex justify-content-between py-2">
-                            <i class="bi-chat"></i>
-                            <i class="bi-arrow-repeat"></i>
+                        <div class="w-90 h-75 pe-4">
+                            <div class="w-100 text-white fs-6 fw-bold">
+                                {% if article.is_retweet %}
+                                    <p>{{ article.user.username }}がリツイート</p>
+                                    <p>{{ article.retweet.sentense }}</p>
+                                {% else %}
+                                    <p>{{ article.user.username}}</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-white fs-5 ">
+                                
+                                {% if article.sentense %}
+                                    <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+                                {% endif %}
+                            </div>
+                            {% if article.image %}
+                            <div>
+                                {% cloudinary article.image.name width=300 height=300 %}
+                            </div>
+                            {% endif %}
+                            <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                                <i class="bi-chat"></i>
+                                {% if article.id in retweet_article_ids %}
+                                    <i class="bi-arrow-repeat" style="color:green;" onclick="retweet(event, {{ article.id }}, 'main',{{login_user.id}}, null )"></i>
+                                {% else %}
+                                    <i class="bi-arrow-repeat" onclick="retweet(event, {{ article.id }}, 'main',{{login_user.id}}, null )"></i>
+                                {% endif %}
                                 {% if article.id in liked_article_ids %}
                                     <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'main',{{login_user.id}}, null )"><span class="ms-1">{{article.likes__count}}</span></i>
                                 {% else %}
                                     <i class="bi-heart" onclick="like(event,{{article.id}},'main',{{login_user.id}}, null)"><span class="ms-1">{{article.likes__count}}</span></i>
                                 {% endif %}
-                            <i class="bi-bar-chart"></i>
-                            <i class="bi-bookmark"></i>
-                            <i class="bi-arrow-bar-up"></i>
+                                <i class="bi-bar-chart"></i>
+                                <i class="bi-bookmark"></i>
+                                <i class="bi-arrow-bar-up"></i>
+                            </div>
                         </div>
-                    </div>
-                    <div class="icons">
-                    </div>
+                        <div class="icons">
+                        </div>
+                    {% endif %}
+
+
+                
                 </div>
+
+
             </a>
             {% endfor %}
 

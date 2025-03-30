@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -183,12 +183,13 @@ def main_view(request):
     else:
         tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-updated_at')
     liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    retweet_article_ids = RetweetModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
     data_page = Paginator(tweet_list, 2)
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids})
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids})
 
 def profile_view(request):
     user_id = request.GET.get("user_id")
@@ -314,6 +315,37 @@ def like_view(request):
             return JsonResponse({'is_registered': False})
         else:
             LikeModel.objects.create(user=custom_user, tweet=tweet)
+            return JsonResponse({'is_registered': True})
+
+def retweet_view(request):
+    if request.method == 'POST':
+        print(111111)
+        tweet_id = request.POST.get("tweet_id", None)
+        origin_tweet_id = request.POST.get("origin_tweet_id", None)
+        user_id = request.POST.get("user_id", None)
+
+        tweet = TweetModel.objects.get(id=tweet_id)
+        origin_tweet=""
+        if origin_tweet_id:
+            origin_tweet = TweetModel.objects.get(id=origin_tweet_id)
+        print(tweet)
+        custom_user = CustomUser.objects.get(id=user_id)
+        print(custom_user)
+        print(RetweetModel.objects.filter(user=custom_user, tweet=tweet))
+        exist_record= RetweetModel.objects.filter(user=custom_user, tweet=tweet).first()
+        print("---")
+        print(exist_record)
+        print("---")
+        print(111)
+        if exist_record:
+            exist_record.delete()
+            origin_tweet.delete()
+            print(222)
+            return JsonResponse({'is_registered': False})
+        else:
+            print(333)
+            RetweetModel.objects.create(user=custom_user, tweet=tweet)
+            TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
             return JsonResponse({'is_registered': True})
 
 
