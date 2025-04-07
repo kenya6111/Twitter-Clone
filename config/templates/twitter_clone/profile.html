@@ -104,46 +104,95 @@
                     </div>
                 </div>
             </nav>
-            <!-- タイムライン -->
-            {% for article in articles %}
+    <!-- タイムライン -->
+    {% for article in articles %}
     <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
-        <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
-            <a href="{% url 'profile' %}?user_id={{ article.user.id}}" >
-                <!-- {% cloudinary article.user.image.name class="rounded-circle w-100 h-100"  %} -->
-                {% if article.user.image %}
-                {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
-                {% else %}
-                <img src="https://placehold.jp/50x50.png" class="rounded-circle w-100 h-100" alt="Default profile">
+        {% if article.is_retweet %}
+            <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
+                <a href="{% url 'profile' %}?user_id={{ article.user.id}}" >
+                    <!-- {% cloudinary article.user.image.name class="rounded-circle w-100 h-100"  %} -->
+                    {% if article.user.image %}
+                    {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
+                    {% else %}
+                    <img src="https://placehold.jp/50x50.png" class="rounded-circle w-100 h-100" alt="Default profile">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="w-90 h-75 pe-4">
+                <div class="w-100 text-white fs-6">
+                    <p>{{ article.user.username}}</p>
+                </div>
+                <div class="text-white fs-5 ">
+                    <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+                </div>
+                {% if article.image %}
+                <div>
+                    {% cloudinary article.image.name width=300 height=300 %}
+                </div>
                 {% endif %}
-            </a>
-        </div>
-        <div class="w-90 h-75 pe-4">
-            <div class="w-100 text-white fs-6">
-                <p>{{ article.user.username}}</p>
+                <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                    <i class="bi-chat"></i>
+                    {% if article.retweet.id in retweet_article_ids %}
+                        <i class="bi-arrow-repeat" style="color:green;" onclick="disRetweet(event, {{ article.retweet.id }}, 'main',{{login_user.id}},{{article.id}}, null )">{{article.retweet_retweets_count}}</i>
+                    {% else %}
+                        <i class="bi-arrow-repeat" onclick="retweet(event, {{ article.retweet.id }}, 'main',{{login_user.id}}, null )">{{article.retweet_retweets_count}}</i>
+                    {% endif %}
+
+                    {% if article.id in liked_article_ids %}
+                    <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'profile',{{custom_user.id}}, null )"><span class="ms-1">{{article.likes_count}}</span></i>
+                    {% else %}
+                        <i class="bi-heart" onclick="like(event,{{article.id}},'profile',{{custom_user.id}}, null)"><span class="ms-1">{{article.likes_count}}</span></i>
+                    {% endif %}
+                    <i class="bi-bar-chart"></i>
+                    <i class="bi-bookmark"></i>
+                    <i class="bi-arrow-bar-up"></i>
+                </div>
             </div>
-            <div class="text-white fs-5 ">
-                <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+            <div class="icons">
             </div>
-            {% if article.image %}
-            <div>
-                {% cloudinary article.image.name width=300 height=300 %}
+        {% else %}
+            <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-2">
+                <a href="{% url 'profile' %}?user_id={{ article.user.id}}" >
+                    {% if article.user.image %}
+                    {% cloudinary article.user.image.name class="rounded-circle w-100 h-100" %}
+                    {% else %}
+                    <img src="https://placehold.jp/50x50.png" class="rounded-circle w-100 h-100" alt="Default profile">
+                    {% endif %}
+                </a>
             </div>
-            {% endif %}
-            <div class="color-gray fs-6 d-flex justify-content-between py-2">
-                <i class="bi-chat"></i>
-                <i class="bi-arrow-repeat"></i>
-                {% if article.id in liked_article_ids %}
-                <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'profile',{{custom_user.id}}, null )"><span class="ms-1">{{article.likes__count}}</span></i>
-                {% else %}
-                    <i class="bi-heart" onclick="like(event,{{article.id}},'profile',{{custom_user.id}}, null)"><span class="ms-1">{{article.likes__count}}</span></i>
+            <div class="w-90 h-75 pe-4">
+                <div class="w-100 text-white fs-6">
+                    <p>{{ article.user.username}}</p>
+                </div>
+                <div class="text-white fs-5 ">
+                    <p class="" style="overflow-wrap: break-word;">{{article.sentense}}</p>
+                </div>
+                {% if article.image %}
+                <div>
+                    {% cloudinary article.image.name width=300 height=300 %}
+                </div>
                 {% endif %}
-                <i class="bi-bar-chart"></i>
-                <i class="bi-bookmark"></i>
-                <i class="bi-arrow-bar-up"></i>
+                <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                    <i class="bi-chat"></i>
+                    <!-- <i class="bi-arrow-repeat"></i> -->
+                    {% if article.id in retweet_article_ids %}
+                        <i class="bi-arrow-repeat" style="color:green;" onclick="disRetweet(event, {{ article.id }}, 'main',{{login_user.id}}, null )">{{article.retweets_count}}</i>
+                    {% else %}
+                        <i class="bi-arrow-repeat" onclick="retweet(event, {{ article.id }}, 'main',{{login_user.id}}, null )">{{article.retweets_count}}</i>
+                    {% endif %}
+                    {% if article.id in liked_article_ids %}
+                    <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'profile',{{custom_user.id}}, null )"><span class="ms-1">{{article.likes_count}}</span></i>
+                    {% else %}
+                        <i class="bi-heart" onclick="like(event,{{article.id}},'profile',{{custom_user.id}}, null)"><span class="ms-1">{{article.likes_count}}</span></i>
+                    {% endif %}
+                    <i class="bi-bar-chart"></i>
+                    <i class="bi-bookmark"></i>
+                    <i class="bi-arrow-bar-up"></i>
+                </div>
             </div>
-        </div>
-        <div class="icons">
-        </div>
+            <div class="icons">
+            </div>
+        {% endif %}
     </div>
     {% endfor %}
 

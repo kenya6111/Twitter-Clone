@@ -174,14 +174,32 @@ def main_view(request):
     # 返信に使われているツイートのID一覧
     reply_tweet_ids = ReplyModel.objects.values_list('reply_tweet_id', flat=True)
     if filter_type == 'foryou':
-        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-updated_at')
     elif filter_type == 'follow':
         following_users = CustomUser.objects.filter(
             id__in=custom_user.followings.values_list("follower_id", flat=True)
         )
-        tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user__in=following_users).exclude(id__in=reply_tweet_ids).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-created_at')
     else:
-        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).annotate(Count("likes")).order_by('-updated_at')
+        tweet_list = TweetModel.objects.exclude(id__in=reply_tweet_ids).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-updated_at')
     liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
     retweet_article_ids = RetweetModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
@@ -201,22 +219,53 @@ def profile_view(request):
     request.session['filtersession'] = filter_type
 
     if filter_type == 'post':
-        tweet_list = TweetModel.objects.filter(user=custom_user).annotate(Count("likes")).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user=custom_user).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-created_at')
     elif filter_type == 'comment':
-        tweet_list = TweetModel.objects.filter(reply_tweets__user=custom_user).annotate(Count("likes")).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(reply_tweets__user=custom_user).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-created_at')
     elif filter_type == 'retweet':
-        tweet_list = TweetModel.objects.filter(retweets__user=custom_user).annotate(Count("likes")).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(retweets__user=custom_user).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-created_at')
     elif filter_type == 'like':
-        tweet_list = TweetModel.objects.filter(likes__user=custom_user).annotate(Count("likes")).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(likes__user=custom_user).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-created_at')
     else:
-        tweet_list = TweetModel.objects.filter(user=custom_user).annotate(Count("likes")).order_by('-created_at')
+        tweet_list = TweetModel.objects.filter(user=custom_user).select_related('retweet').annotate(
+            likes_count=Count('likes', distinct=True),
+            retweets_count=Count('retweets', distinct=True),
+        ).annotate(
+            retweet_likes_count=Count('retweet__likes', distinct=True),
+            retweet_retweets_count=Count('retweet__retweets', distinct=True),
+        ).order_by('-created_at')
 
     liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    retweet_article_ids = RetweetModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
     data_page = Paginator(tweet_list, 2)
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles,"liked_article_ids":liked_article_ids})
+    return render(request, 'twitter_clone/profile.html', {'custom_user':custom_user, 'articles':articles,"liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids})
 
 def profile_edit_view(request):
     user_id = request.GET.get("user_id")
@@ -276,17 +325,18 @@ def tweet_detail_view(request):
     origin_tweet_id = request.GET.get("tweet_id")
 
     tweet = TweetModel.objects.get(id=origin_tweet_id)
-    display_tweet = TweetModel.objects.filter(id=origin_tweet_id).annotate(Count("likes"))
+    display_tweet = TweetModel.objects.filter(id=origin_tweet_id).annotate(Count("likes"),Count('retweets'))
 
-    reply_list = ReplyModel.objects.filter(origin_tweet=tweet).annotate(like_count=Count("reply_tweet__likes")).order_by('-created_at')
+    reply_list = ReplyModel.objects.filter(origin_tweet=tweet).annotate(like_count=Count("reply_tweet__likes"),retweet_count=Count("reply_tweet__retweets")).order_by('-created_at')
 
     liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    retweet_article_ids = RetweetModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
     data_page = Paginator(reply_list, 2)
     p = request.GET.get('p')
     replies = data_page.get_page(p)
 
-    return render(request, 'twitter_clone/tweet_detail.html',{"article":display_tweet[0], "login_user":login_user,"replies":replies,"liked_article_ids":liked_article_ids})
+    return render(request, 'twitter_clone/tweet_detail.html',{"article":display_tweet[0], "login_user":login_user,"replies":replies,"liked_article_ids":liked_article_ids,"retweet_article_ids":retweet_article_ids})
 
 def tweet_view(request):
     if request.method == 'POST':
@@ -319,7 +369,6 @@ def like_view(request):
 
 def retweet_view(request):
     if request.method == 'POST':
-        print(111111)
         tweet_id = request.POST.get("tweet_id", None)
         origin_tweet_id = request.POST.get("origin_tweet_id", None)
         user_id = request.POST.get("user_id", None)
@@ -328,22 +377,13 @@ def retweet_view(request):
         origin_tweet=""
         if origin_tweet_id:
             origin_tweet = TweetModel.objects.get(id=origin_tweet_id)
-        print(tweet)
         custom_user = CustomUser.objects.get(id=user_id)
-        print(custom_user)
-        print(RetweetModel.objects.filter(user=custom_user, tweet=tweet))
         exist_record= RetweetModel.objects.filter(user=custom_user, tweet=tweet).first()
-        print("---")
-        print(exist_record)
-        print("---")
-        print(111)
         if exist_record:
             exist_record.delete()
             origin_tweet.delete()
-            print(222)
             return JsonResponse({'is_registered': False})
         else:
-            print(333)
             RetweetModel.objects.create(user=custom_user, tweet=tweet)
             TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
             return JsonResponse({'is_registered': True})
