@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -207,6 +207,10 @@ def main_view(request):
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
+
+    ## ログインユーザがフォローしてるユーザリスト取得
+    follower_list= FollowModel.objects.filter(following=custom_user).values_list('follower',flat=True)
+    follower_ids = list(follower_list)
     return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids})
 
 def profile_view(request):
@@ -387,5 +391,26 @@ def retweet_view(request):
             RetweetModel.objects.create(user=custom_user, tweet=tweet)
             TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
             return JsonResponse({'is_registered': True})
+
+def follow_unfollow(request):
+    if request.method == 'POST':
+        # tweet_id = request.POST.get("tweet_id", None)
+        # origin_tweet_id = request.POST.get("origin_tweet_id", None)
+        # user_id = request.POST.get("user_id", None)
+
+        # tweet = TweetModel.objects.get(id=tweet_id)
+        # origin_tweet=""
+        # if origin_tweet_id:
+        #     origin_tweet = TweetModel.objects.get(id=origin_tweet_id)
+        # custom_user = CustomUser.objects.get(id=user_id)
+        # exist_record= RetweetModel.objects.filter(user=custom_user, tweet=tweet).first()
+        # if exist_record:
+        #     exist_record.delete()
+        #     origin_tweet.delete()
+        #     return JsonResponse({'is_registered': False})
+        # else:
+        #     RetweetModel.objects.create(user=custom_user, tweet=tweet)
+        #     TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
+        return JsonResponse({'is_registered': True})
 
 

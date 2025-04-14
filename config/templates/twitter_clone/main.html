@@ -11,6 +11,14 @@
     .w-7{
     width:7%;
     }
+
+#myModal{
+    position: absolute;
+    top: 0px;
+    left: 75%;
+    height:25%;
+    width:25%;
+}
 </style>
 {% endblock %}
 
@@ -125,7 +133,7 @@
                     </div>
                 </a>
             {% else %}
-                <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}">
+                <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}" class="position-relative">
                     <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
                         <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
                             <span onClick="moveToProfile('{% url 'profile' %}?user_id={{article.user.id}}',event)">
@@ -138,7 +146,19 @@
                                     <p>{{ article.user.username }}がリツイート</p>
                                     <p>{{ article.retweet.sentense }}</p>
                                 {% else %}
-                                    <p>{{ article.user.username}}</p>
+                                    <div class="d-flex justify-content-between">
+                                        <p>{{ article.user.username}}</p>
+                                        <i class="bi bi-three-dots" id="openModal"></i>
+                                        <div id="myModal" class="bg-warning modal ">
+                                            <div class="">
+                                                <span id="closeModal">✖︎</span>
+                                                <!-- フォロー済みの場合、〇〇さんをアンフォロー -->
+                                                <button>〇〇さんをアンフォロー</button>
+                                                <!-- 未フォローの場合、〇〇さんをフォロー -->
+                                                <button>〇〇さんをフォロー</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 {% endif %}
                             </div>
                             <div class="text-white fs-5 ">
