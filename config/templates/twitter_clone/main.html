@@ -12,7 +12,7 @@
     width:7%;
     }
 
-#myModal{
+.myModal{
     position: absolute;
     top: 0px;
     left: 75%;
@@ -146,18 +146,27 @@
                                     <p>{{ article.user.username }}がリツイート</p>
                                     <p>{{ article.retweet.sentense }}</p>
                                 {% else %}
-                                    <div class="d-flex justify-content-between">
-                                        <p>{{ article.user.username}}</p>
-                                        <i class="bi bi-three-dots" id="openModal"></i>
-                                        <div id="myModal" class="bg-warning modal ">
-                                            <div class="">
-                                                <span id="closeModal">✖︎</span>
-                                                <!-- フォロー済みの場合、〇〇さんをアンフォロー -->
-                                                <button>〇〇さんをアンフォロー</button>
-                                                <!-- 未フォローの場合、〇〇さんをフォロー -->
-                                                <button>〇〇さんをフォロー</button>
-                                            </div>
+                                <div class="d-flex justify-content-between">
+                                    <p>{{ article.user.username}}</p>
+                                    <p>{{ article.user.id}}</p>
+                                    <p>{{ follower_ids }}</p>
+                                    !!!!!{{ forloop.counter }}
+                                    <i class="bi bi-three-dots " id="openModal-{{forloop.counter }}" onclick="modalOpen()"></i>
+                                    
+                                    <div id="myModal-{{forloop.counter }}" class="bg-warning modal myModal ">
+                                        <div class="">
+                                            <span id="closeModal" onclick="modalClose()">✖︎</span>
+                                    {% if article.user.id in follower_ids %}
+                                            <p>{{article.user.id}}ありまーす</p>
+                                            <!-- フォロー済みの場合、〇〇さんをアンフォロー -->
+                                            <button onclick="unfollow({{login_user.id}},{{article.user.id}})">〇〇さんをアンフォロー</button>
+                                    {% else %}
+                                            <p>{{article.user.id}}ありまセーン</p>
+                                            <!-- 未フォローの場合、〇〇さんをフォロー -->
+                                            <button onclick="follow({{login_user.id}},{{article.user.id}})">〇〇さんをフォロー</button>
+                                    {% endif %}
                                         </div>
+                                    </div>
                                     </div>
                                 {% endif %}
                             </div>
