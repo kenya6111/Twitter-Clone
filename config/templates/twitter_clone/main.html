@@ -19,6 +19,19 @@
     height:25%;
     min-height:11rem;
     width:25%;
+    border-radius: 5px;
+    padding:8px;
+    box-shadow: 0px 0px 8px #fff;
+    background-color: rgba(23,23,24,1)!important;
+}
+
+.follow-btn{
+    background-color: rgba(23,23,24,1)!important;
+    color:white;
+    font-weight: bold;
+    border-radius: 5px;
+    padding:2px;
+
 }
 </style>
 {% endblock %}
@@ -155,13 +168,9 @@
                                             <span id="closeModal" onclick="modalClose()">✖︎</span>
                                     {% if article.user.id != user.id %}
                                         {% if article.user.id in follower_ids %}
-                                                <p>{{article.user.id}}ありまーす</p>
-                                                <!-- フォロー済みの場合、〇〇さんをアンフォロー -->
-                                                <button onclick="followUnfollow({{login_user.id}},{{article.user.id}},'')">{{article.user.username}}さんをアンフォロー</button>
+                                            <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},'')">{{article.user.username}}さんをアンフォロー</button>
                                         {% else %}
-                                                <p>{{article.user.id}}ありまセーン</p>
-                                                <!-- 未フォローの場合、〇〇さんをフォロー -->
-                                                <button onclick="followUnfollow({{login_user.id}},{{article.user.id}},true)">{{article.user.username}}さんをフォロー</button>
+                                            <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},true)">{{article.user.username}}さんをフォロー</button>
                                         {% endif %}
                                     {% endif %}
                                         </div>
