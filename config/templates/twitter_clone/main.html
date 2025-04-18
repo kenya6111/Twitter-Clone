@@ -17,6 +17,7 @@
     top: 0px;
     left: 75%;
     height:25%;
+    min-height:11rem;
     width:25%;
 }
 </style>
@@ -148,22 +149,20 @@
                                 {% else %}
                                 <div class="d-flex justify-content-between">
                                     <p>{{ article.user.username}}</p>
-                                    <p>{{ article.user.id}}</p>
-                                    <p>{{ follower_ids }}</p>
-                                    !!!!!{{ forloop.counter }}
                                     <i class="bi bi-three-dots " id="openModal-{{forloop.counter }}" onclick="modalOpen()"></i>
-                                    
                                     <div id="myModal-{{forloop.counter }}" class="bg-warning modal myModal ">
                                         <div class="">
                                             <span id="closeModal" onclick="modalClose()">✖︎</span>
-                                    {% if article.user.id in follower_ids %}
-                                            <p>{{article.user.id}}ありまーす</p>
-                                            <!-- フォロー済みの場合、〇〇さんをアンフォロー -->
-                                            <button onclick="unfollow({{login_user.id}},{{article.user.id}})">〇〇さんをアンフォロー</button>
-                                    {% else %}
-                                            <p>{{article.user.id}}ありまセーン</p>
-                                            <!-- 未フォローの場合、〇〇さんをフォロー -->
-                                            <button onclick="follow({{login_user.id}},{{article.user.id}})">〇〇さんをフォロー</button>
+                                    {% if article.user.id != user.id %}
+                                        {% if article.user.id in follower_ids %}
+                                                <p>{{article.user.id}}ありまーす</p>
+                                                <!-- フォロー済みの場合、〇〇さんをアンフォロー -->
+                                                <button onclick="followUnfollow({{login_user.id}},{{article.user.id}},'')">{{article.user.username}}さんをアンフォロー</button>
+                                        {% else %}
+                                                <p>{{article.user.id}}ありまセーン</p>
+                                                <!-- 未フォローの場合、〇〇さんをフォロー -->
+                                                <button onclick="followUnfollow({{login_user.id}},{{article.user.id}},true)">{{article.user.username}}さんをフォロー</button>
+                                        {% endif %}
                                     {% endif %}
                                         </div>
                                     </div>

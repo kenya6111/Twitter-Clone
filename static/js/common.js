@@ -147,6 +147,35 @@ async function disRetweet(event,tweetId,redirectPath,loginUserId,originTweetId,p
   });
 }
 
+const followUrl = location.origin + "/follow_unfollow"
+
+async function followUnfollow (loginuserId,TweetUserId,is_follow){
+  event.stopPropagation();
+  event.preventDefault();
+  const csrftoken = getCookie("csrftoken");
+
+  const body = new URLSearchParams()
+  body.append('login_user_id', loginuserId)
+  body.append('tweet_user_id', TweetUserId)
+  body.append('is_follow', is_follow)
+
+  await fetch(followUrl,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': csrftoken
+    },
+    body: body
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    window.location=location.origin+"/main"
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+}
 
 function getCookie(name) {
   let cookieValue = null;
