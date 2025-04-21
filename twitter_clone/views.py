@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -397,13 +397,13 @@ def follow_unfollow(request):
         login_user_id = request.POST.get("login_user_id", None)
         tweet_user_id = request.POST.get("tweet_user_id", None)
         is_follow = request.POST.get("is_follow", None)
-        login_user = CustomUser.objects.get(id=login_user_id)
-        tweet_user = CustomUser.objects.get(id=tweet_user_id)
+        login_user = get_object_or_404(CustomUser,id=login_user_id)
+        tweet_user = get_object_or_404(CustomUser,id=tweet_user_id)
 
         if is_follow:
             FollowModel.objects.create(follower=tweet_user,following=login_user)
         else:
-            exist_record = FollowModel.objects.filter(follower=tweet_user,following=login_user).first()
+            exist_record = get_object_or_404(FollowModel,follower=tweet_user,following=login_user)
             exist_record.delete()
             return JsonResponse({'is_registered': False})
         return JsonResponse({'is_registered': True})
