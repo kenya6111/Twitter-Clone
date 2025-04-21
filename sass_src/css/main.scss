@@ -88,3 +88,29 @@ a {
   text-decoration: none;
   color:#fff;
 }
+
+.w-7{
+    width:7%;
+    }
+
+.myModal{
+    position: absolute;
+    top: 0px;
+    left: 75%;
+    height:25%;
+    min-height:11rem;
+    width:25%;
+    border-radius: 5px;
+    padding:8px;
+    box-shadow: 0px 0px 8px #fff;
+    background-color: rgba(23,23,24,1)!important;
+}
+
+.follow-btn{
+    background-color: rgba(23,23,24,1)!important;
+    color:white;
+    font-weight: bold;
+    border-radius: 5px;
+    padding:2px;
+
+}
