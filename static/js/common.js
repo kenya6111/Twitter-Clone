@@ -147,7 +147,7 @@ async function disRetweet(event,tweetId,redirectPath,loginUserId,originTweetId,p
   });
 }
 
-const followUrl = location.origin + "/follow_unfollow"
+const followUrl = location.origin + "/follow"
 
 async function followUnfollow (loginuserId,TweetUserId,is_follow){
   event.stopPropagation();
