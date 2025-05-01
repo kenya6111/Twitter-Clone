@@ -1,9 +1,9 @@
 from datetime import datetime
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -207,7 +207,11 @@ def main_view(request):
 
     p = request.GET.get('p')
     articles = data_page.get_page(p)
-    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids})
+
+    ## ログインユーザがフォローしてるユーザリスト取得
+    follower_list= FollowModel.objects.filter(following=custom_user).values_list('follower',flat=True)
+    follower_ids = list(follower_list)
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids,"follower_ids":follower_ids})
 
 def profile_view(request):
     user_id = request.GET.get("user_id")
@@ -387,5 +391,21 @@ def retweet_view(request):
             RetweetModel.objects.create(user=custom_user, tweet=tweet)
             TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
             return JsonResponse({'is_registered': True})
+
+def follow_unfollow(request):
+    if request.method == 'POST':
+        login_user_id = request.POST.get("login_user_id", None)
+        tweet_user_id = request.POST.get("tweet_user_id", None)
+        is_follow = request.POST.get("is_follow", None)
+        login_user = get_object_or_404(CustomUser,id=login_user_id)
+        tweet_user = get_object_or_404(CustomUser,id=tweet_user_id)
+
+        if is_follow:
+            FollowModel.objects.create(follower=tweet_user,following=login_user)
+        else:
+            exist_record = get_object_or_404(FollowModel,follower=tweet_user,following=login_user)
+            exist_record.delete()
+            return JsonResponse({'is_registered': False})
+        return JsonResponse({'is_registered': True})
 
 

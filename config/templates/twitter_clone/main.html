@@ -8,9 +8,7 @@
 {% block styles %}
 <link rel="stylesheet" href="{% sass_src 'css/main.scss' %}" />
 <style>
-    .w-7{
-    width:7%;
-    }
+
 </style>
 {% endblock %}
 
@@ -125,7 +123,7 @@
                     </div>
                 </a>
             {% else %}
-                <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}">
+                <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}" class="position-relative">
                     <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
                         <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
                             <span onClick="moveToProfile('{% url 'profile' %}?user_id={{article.user.id}}',event)">
@@ -138,7 +136,22 @@
                                     <p>{{ article.user.username }}がリツイート</p>
                                     <p>{{ article.retweet.sentense }}</p>
                                 {% else %}
+                                <div class="d-flex justify-content-between">
                                     <p>{{ article.user.username}}</p>
+                                    <i class="bi bi-three-dots " id="openModal-{{forloop.counter }}" onclick="modalOpen()"></i>
+                                    <div id="myModal-{{forloop.counter }}" class="bg-warning modal myModal ">
+                                        <div class="">
+                                            <span id="closeModal" onclick="modalClose()">✖︎</span>
+                                    {% if article.user.id != user.id %}
+                                        {% if article.user.id in follower_ids %}
+                                            <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},'')">{{article.user.username}}さんをアンフォロー</button>
+                                        {% else %}
+                                            <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},true)">{{article.user.username}}さんをフォロー</button>
+                                        {% endif %}
+                                    {% endif %}
+                                        </div>
+                                    </div>
+                                    </div>
                                 {% endif %}
                             </div>
                             <div class="text-white fs-5 ">

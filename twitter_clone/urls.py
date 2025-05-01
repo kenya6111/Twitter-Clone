@@ -12,5 +12,6 @@ urlpatterns = [
     path('tweet', views.tweet_view, name='tweet'),
     path('tweet_detail', views.tweet_detail_view, name='tweet_detail'),
     path('like', views.like_view, name='like'),
-    path('retweet', views.retweet_view, name='retweet')
+    path('retweet', views.retweet_view, name='retweet'),
+    path('follow', views.follow_unfollow, name='follow')
 ]
