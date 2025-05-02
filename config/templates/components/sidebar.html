@@ -21,13 +21,13 @@
             </a>
         </div>
         <div class="mt-2">
-            <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+            <a href="{% url 'message' %}?user_id={{login_user.id}}&tweet_user_id='' " class="btn btn-primary rounded-5 bg-black border border-black side-btn" role="button">
                 <i class="bi-envelope  fs-3"></i>
                 <span class="ms-2 fs-5">Messages</span>
             </a>
         </div>
         <div class="mt-2">
-            <a href="{% url 'bookmark' %}" class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+            <a href="{% url 'bookmark' %}" class="btn btn-primary rounded-5 bg-black border border-black side-btn" role="button">
                 <i class="bi-bookmark  fs-3"></i>
                 <span class="ms-2 fs-5">Bookmarks</span>
             </a>

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load cloudinary %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% sass_src 'css/main.scss' %}" />
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- {% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %} -->
+<div class="w-100 h-100 bg-top-parent">
+    <!-- ヘッダー -->
+        {% include 'components/header.html' %}
+    <!-- メインコンテンツ -->
+    <div class="row menu-container">
+        <!-- サイドバー -->s
+        {% include 'components/sidebar.html' %}
+        <!-- センターバー -->
+        <div class="col-3 border-gray-side">
+          <!-- タイトル＋戻るボタン -->
+          <div class="fs-5 d-flex justify-content-start align-items-start pt-3 ps-3 border-gray-bottom">
+            <a href="{% url 'main' %}">
+                <i class="bi-arrow-left"></i>
+            </a>
+            <p class="ms-2 text-white">Messages</p>
+          </div>
+          <!-- トークルーム -->
+          {% for message_room in message_rooms %}
+
+          <a href="{% url 'message' %}?user_id={{message_room.user1.id}}&room_id={{message_room.id}}">
+            <div class="d-flex flex-row py-2 border-gray-bottom tweet">
+              <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
+                <span>
+                    {% cloudinary message_room.user2.image.name class="rounded-circle w-100 h-100" %}
+                </span>
+              </div>
+              <div class="w-90 h-75 pe-4">
+                <div class="w-100 text-white fs-6 fw-bold">
+                  <div class="d-flex justify-content-between">
+                      <p>{{ message_room.user2.username}}</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        <!-- サイドバー（右） -->
+        <div class="col-4 d-flex flex-column ">
+          <!-- ユーザ名 -->
+          <div class="fs-5 d-flex justify-content-start align-items-start pt-3 ps-3 ">
+            <p class="ms-2 text-white">{{message_room.user2.username}}</p>
+          </div>
+          <!-- 相手プロフィール -->
+          <div class="p-3">
+            <div>
+              <span class="d-flex justify-content-center align-items-center">
+                {% cloudinary message_room.user2.image.name class="rounded-circle w-15 h-15" %}
+              </span>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+              <p class="text-white mt-2">{{ message_room.user2.username}}</p>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+              <p class="text-white mt-2">{{ message_room.user2.introduction}}</p>
+            </div>
+
+          </div>
+          <!-- メッセージ履歴 -->
+          <div class="messages p-2">
+          {% for message in messages %}
+            {% if message.sender.id == request.user.id %}
+              <!-- 自分のメッセージ -->
+              <div class="d-flex flex-column align-items-end mb-3">
+                <div class="bg-primary text-white p-2 rounded-3" style="max-width: 75%; overflow-wrap: break-word;">
+                  {{ message.content }}
+                </div>
+                <div class="small text-secondary mt-1">{{ message.created_at|date:"Y/m/d H:i" }}</div>
+              </div>
+            {% else %}
+              <!-- 相手のメッセージ -->
+              <div class="d-flex flex-column align-items-start mb-3">
+                <div class="bg-dark text-white p-2 rounded-3" style="max-width: 75%; overflow-wrap: break-word;">
+                  {{ message.content }}
+                </div>
+              <div class="small text-secondary mt-1">{{ message.created_at|date:"Y/m/d H:i" }}</div>
+
+              </div>
+            {% endif %}
+            {% empty %}
+              <p class="text-muted">まだメッセージはありません。</p>
+            {% endfor %}
+            <!-- 送信フォーム -->
+          </div>
+          <form method="post" action="{% url 'message' %}" class="p-3 border-gray-top mt-auto ">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ message_room.user1.id }}">
+            <input type="hidden" name="room_id" value="{{ message_room.id }}">
+            <div class="input-group">
+              <input type="text" name="content" class="form-control bg-dark text-white" required>
+              <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i></button>
+            </div>
+          </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}

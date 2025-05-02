@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel,MessageRoomModel,MessageModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -441,4 +441,31 @@ def bookmark(request):
     follower_list= FollowModel.objects.filter(following=custom_user).values_list('follower',flat=True)
     follower_ids = list(follower_list)
     return render(request, 'twitter_clone/bookmark.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids,"bookmark_article_ids":bookmark_article_ids,"follower_ids":follower_ids})
+
+def message(request):
+    user_id=""
+    if request.method == 'POST':
+        user_id = request.POST.get("user_id", None)
+        room_id = request.POST.get("room_id", None)
+        content = request.POST.get("content", None)
+        custom_user = get_object_or_404(CustomUser,id=user_id)
+        message_room = get_object_or_404(MessageRoomModel,id=room_id)
+        if content:
+            MessageModel.objects.create(room=message_room ,sender=custom_user,content=content)
+        redirect_url = reverse('message')
+        parameters = urlencode({'user_id': user_id,'room_id': room_id})
+        url = f'{redirect_url}?{parameters}'
+        return redirect(url)
+
+    user_id = request.GET.get("user_id", None)
+    print("user_id",user_id)
+    custom_user = CustomUser.objects.get(id=user_id)
+    message_rooms = MessageRoomModel.objects.filter(user1=custom_user)
+    messages =""
+    message_room=""
+    if "room_id" in request.GET:
+        room_id = request.GET.get("room_id")
+        message_room = MessageRoomModel.objects.get(id=room_id)
+        messages = MessageModel.objects.filter(room=message_room)
+    return render(request, 'twitter_clone/message.html', {"custom_user":custom_user,"message_rooms":message_rooms,"messages":messages, "message_room":message_room,"login_user":custom_user})
 
