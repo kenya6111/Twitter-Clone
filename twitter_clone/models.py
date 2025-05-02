@@ -3,6 +3,7 @@ import re
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib.auth.models import AbstractUser
+from django.db.models import Q, F
 # Create your models here.
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -122,3 +123,24 @@ class BookmarkModel(BaseModel):
                 name="bookmark_unique"
             ),
         ]
+
+class MessageRoomModel(BaseModel):
+    user1 = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='rooms_user1')
+    user2 = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='rooms_user2')
+    class Meta:
+        db_table = "message_rooms"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user1", "user2"],
+                name="room_unique",
+                condition=Q(user1__lt=F('user2')),
+            ),
+        ]
+
+class MessageModel(BaseModel):
+    room = models.ForeignKey(MessageRoomModel, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField(max_length=270, null=True, blank=True)
+
+    class Meta:
+        db_table = "messages"

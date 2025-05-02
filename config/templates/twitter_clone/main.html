@@ -142,13 +142,14 @@
                                     <div id="myModal-{{forloop.counter }}" class="bg-warning modal myModal ">
                                         <div class="">
                                             <span id="closeModal" onclick="modalClose()">✖︎</span>
-                                    {% if article.user.id != user.id %}
-                                        {% if article.user.id in follower_ids %}
-                                            <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},'')">{{article.user.username}}さんをアンフォロー</button>
-                                        {% else %}
-                                            <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},true)">{{article.user.username}}さんをフォロー</button>
+                                        {% if article.user.id != user.id %}
+                                            {% if article.user.id in follower_ids %}
+                                                <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},'')">{{article.user.username}}さんをアンフォロー</button>
+                                            {% else %}
+                                                <button class="follow-btn" onclick="followUnfollow({{login_user.id}},{{article.user.id}},true)">{{article.user.username}}さんをフォロー</button>
+                                            {% endif %}
+                                            <button class="follow-btn" onclick="startMessage({{login_user.id}},{{article.user.id}})">{{article.user.username}}さんにDMを送る</button>
                                         {% endif %}
-                                    {% endif %}
                                         </div>
                                     </div>
                                     </div>
