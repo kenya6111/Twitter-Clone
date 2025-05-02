@@ -109,3 +109,16 @@ class ReplyModel(BaseModel):
 
     class Meta:
         db_table = "replies"
+
+class BookmarkModel(BaseModel):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='bookmarks')
+    tweet = models.ForeignKey(TweetModel, on_delete=models.CASCADE, related_name='bookmarks')
+
+    class Meta:
+        db_table = "bookmarks"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "tweet"],
+                name="bookmark_unique"
+            ),
+        ]

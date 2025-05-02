@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -202,6 +202,7 @@ def main_view(request):
         ).order_by('-updated_at')
     liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
     retweet_article_ids = RetweetModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    bookmark_article_ids = BookmarkModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
 
     data_page = Paginator(tweet_list, 2)
 
@@ -211,7 +212,7 @@ def main_view(request):
     ## ログインユーザがフォローしてるユーザリスト取得
     follower_list= FollowModel.objects.filter(following=custom_user).values_list('follower',flat=True)
     follower_ids = list(follower_list)
-    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids,"follower_ids":follower_ids})
+    return render(request, 'twitter_clone/main.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids,"bookmark_article_ids":bookmark_article_ids,"follower_ids":follower_ids})
 
 def profile_view(request):
     user_id = request.GET.get("user_id")
@@ -408,4 +409,36 @@ def follow_unfollow(request):
             return JsonResponse({'is_registered': False})
         return JsonResponse({'is_registered': True})
 
+
+
+def bookmark(request):
+    if request.method == 'POST':
+        tweet_id = request.POST.get("tweet_id", None)
+        user_id = request.POST.get("user_id", None)
+        tweet = TweetModel.objects.get(id=tweet_id)
+        custom_user = CustomUser.objects.get(id=user_id)
+
+        exist_record= BookmarkModel.objects.filter(user=custom_user, tweet=tweet).first()
+
+        if exist_record:
+            exist_record.delete()
+            return JsonResponse({'is_registered': False})
+        else:
+            BookmarkModel.objects.create(user=custom_user, tweet=tweet)
+            return JsonResponse({'is_registered': True})
+    user = request.user
+    custom_user = CustomUser.objects.get(id=user.id)
+    tweet_list = TweetModel.objects.filter(bookmarks__user=custom_user).annotate(likes_count=Count('likes', distinct=True),retweets_count=Count('retweets', distinct=True))
+
+    liked_article_ids = LikeModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    retweet_article_ids = RetweetModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+    bookmark_article_ids = BookmarkModel.objects.filter(user = request.user).values_list("tweet_id", flat=True)
+
+    data_page = Paginator(tweet_list, 2)
+    p = request.GET.get('p')
+    articles = data_page.get_page(p)
+
+    follower_list= FollowModel.objects.filter(following=custom_user).values_list('follower',flat=True)
+    follower_ids = list(follower_list)
+    return render(request, 'twitter_clone/bookmark.html', {'login_user':custom_user, 'tweet_list':tweet_list,'articles': articles, "liked_article_ids":liked_article_ids, "retweet_article_ids":retweet_article_ids,"bookmark_article_ids":bookmark_article_ids,"follower_ids":follower_ids})
 
