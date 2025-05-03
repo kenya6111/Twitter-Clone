@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="mt-2">
-            <a class="btn btn-primary rounded-5 bg-black border border-black side-btn" href="#" role="button">
+            <a href="{% url 'notice' %}?user_id={{login_user.id}}" class="btn btn-primary rounded-5 bg-black border border-black side-btn" role="button">
                 <i class="bi-bell  fs-3"></i>
                 <span class="ms-2 fs-5">Notifications</span>
             </a>
