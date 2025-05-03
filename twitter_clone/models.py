@@ -144,3 +144,13 @@ class MessageModel(BaseModel):
 
     class Meta:
         db_table = "messages"
+
+class NotificationModel(BaseModel):
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='senders')
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='receivers')
+    action_flag = models.CharField(default="")
+    notice_target = models.ForeignKey('TweetModel', on_delete=models.CASCADE, null=True, blank=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "notifications"

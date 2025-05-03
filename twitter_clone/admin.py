@@ -1,6 +1,6 @@
 from django.contrib import admin
 # from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser,EmailVerificationModel,TweetModel,FollowModel,LikeModel,RetweetModel,ReplyModel,BookmarkModel,MessageRoomModel,MessageModel
+from .models import CustomUser,EmailVerificationModel,TweetModel,FollowModel,LikeModel,RetweetModel,ReplyModel,BookmarkModel,MessageRoomModel,MessageModel,NotificationModel
 
 # Register your models here.
 # @admin.register(CustomUser)
@@ -21,3 +21,4 @@ admin.site.register(ReplyModel)
 admin.site.register(BookmarkModel)
 admin.site.register(MessageRoomModel)
 admin.site.register(MessageModel)
+admin.site.register(NotificationModel)

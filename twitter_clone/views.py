@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel,MessageRoomModel,MessageModel
+from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel,MessageRoomModel,MessageModel,NotificationModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -27,6 +27,37 @@ def send_verification_email(user,code):
         user.email
     ]
     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+
+def send_notification_email(user,receive_user, action_type):
+    """アクション別テンプレート"""
+    templates = {
+        "like": {
+            "subject": "あなたの投稿にいいねが付きました",
+            "message": f"{receive_user.username}さん、あなたの投稿にいいねがありました。今すぐ確認しましょう。"
+        },
+        "retweet": {
+            "subject": "あなたの投稿がリツイートされました",
+            "message": f"{receive_user.username}さん、あなたの投稿がリツイートされました。通知をチェックしてください。"
+        },
+        "comment": {
+            "subject": "あなたの投稿にコメントがありました",
+            "message": f"{receive_user.username}さん、あなたの投稿に新しいコメントがあります。"
+        }
+    }
+
+    # テンプレートが存在するかチェック
+    if action_type not in templates:
+        raise ValueError(f"未対応のアクションタイプです: {action_type}")
+
+    template = templates[action_type]
+
+    send_mail(
+        subject=template["subject"],
+        message=template["message"],
+        from_email="kenyanke6111@gmail.com",
+        recipient_list=[receive_user.email],
+        fail_silently=False
+    )
 
 def signup_view(request):
     request.session.clear()
@@ -323,6 +354,10 @@ def tweet_detail_view(request):
         reply_tweet = TweetModel.objects.create(user=login_user, sentense=tweet_sentence, image=tweet_image)
         ReplyModel.objects.create(user=tweet.user, origin_tweet=tweet, reply_tweet=reply_tweet)
 
+        if tweet.user.id != int(user.id):
+            NotificationModel.objects.create(sender=login_user,receiver=tweet.user,action_flag="comment",notice_target=reply_tweet)
+            send_notification_email(login_user,tweet.user,"comment")
+
         url = reverse('tweet_detail')
         parameters = urlencode({"tweet_id":origin_tweet_id})
         return redirect(f'{url}?{parameters}')
@@ -370,6 +405,10 @@ def like_view(request):
             return JsonResponse({'is_registered': False})
         else:
             LikeModel.objects.create(user=custom_user, tweet=tweet)
+            if tweet.user.id != int(user_id):
+                # notificationModeへの追加とメール送信
+                NotificationModel.objects.create(sender=custom_user,receiver=tweet.user,action_flag="like",notice_target=tweet)
+                send_notification_email(custom_user,tweet.user,"like")
             return JsonResponse({'is_registered': True})
 
 def retweet_view(request):
@@ -391,6 +430,10 @@ def retweet_view(request):
         else:
             RetweetModel.objects.create(user=custom_user, tweet=tweet)
             TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
+
+            if tweet.user.id != int(user_id):
+                NotificationModel.objects.create(sender=custom_user,receiver=tweet.user,action_flag="retweet",notice_target=tweet)
+                send_notification_email(custom_user,tweet.user,"retweet")
             return JsonResponse({'is_registered': True})
 
 def follow_unfollow(request):
@@ -408,8 +451,6 @@ def follow_unfollow(request):
             exist_record.delete()
             return JsonResponse({'is_registered': False})
         return JsonResponse({'is_registered': True})
-
-
 
 def bookmark(request):
     if request.method == 'POST':
@@ -458,7 +499,6 @@ def message(request):
         return redirect(url)
 
     user_id = request.GET.get("user_id", None)
-    print("user_id",user_id)
     custom_user = CustomUser.objects.get(id=user_id)
     message_rooms = MessageRoomModel.objects.filter(user1=custom_user)
     messages =""
@@ -469,3 +509,8 @@ def message(request):
         messages = MessageModel.objects.filter(room=message_room)
     return render(request, 'twitter_clone/message.html', {"custom_user":custom_user,"message_rooms":message_rooms,"messages":messages, "message_room":message_room,"login_user":custom_user})
 
+def notice(request):
+    user_id = request.GET.get("user_id", None)
+    custom_user = CustomUser.objects.get(id=user_id)
+    notifications = NotificationModel.objects.filter(receiver=custom_user)
+    return render(request, 'twitter_clone/notice.html', {"notifications":notifications})
