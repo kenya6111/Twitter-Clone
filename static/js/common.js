@@ -177,6 +177,36 @@ async function followUnfollow (loginuserId,TweetUserId,is_follow){
 
 }
 
+
+const bookmarkUrl = location.origin + "/bookmark"
+
+async function bookmark (tweetId,loginUserId){
+  event.stopPropagation();
+  event.preventDefault();
+  const csrftoken = getCookie("csrftoken");
+
+  const body = new URLSearchParams()
+  body.append('tweet_id', tweetId)
+  body.append('user_id', loginUserId)
+
+  await fetch(bookmarkUrl,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': csrftoken
+    },
+    body: body
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    window.location=location.origin+"/main"
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+}
+
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
