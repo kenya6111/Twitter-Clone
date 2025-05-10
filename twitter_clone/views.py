@@ -481,7 +481,7 @@ def make_message_room_view(request):
         exist_record= MessageRoomModel.objects.filter(Q(user1=login_user, user2=tweet_user)|Q(user1=tweet_user, user2=login_user)).first()
 
         if exist_record:
-            return JsonResponse({'is_registered': False})
+            return JsonResponse({'is_registered': False,'room_id': exist_record.id})
         else:
-            MessageRoomModel.objects.create(user1=login_user,user2=tweet_user)
-            return JsonResponse({'is_registered': True})
+            room = MessageRoomModel.objects.create(user1=login_user,user2=tweet_user)
+            return JsonResponse({'is_registered': True, 'room_id': room.id})

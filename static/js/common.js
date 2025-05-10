@@ -235,7 +235,7 @@ async function startMessage (loginUserId,TweetUserId){
   })
   .then((response) => response.json())
   .then((data) => {
-    window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}`
+    window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}&room_id=${data.room_id}`
   })
   .catch(error => {
     console.error(error);
