@@ -99,7 +99,7 @@
           </div>
           <!-- メッセージ履歴 -->
           <div class="messages p-2">
-          {% if messages %}
+          {% if message_rooms %}
             {% for message in messages %}
               {% if message.sender.id == request.user.id %}
                 <!-- 自分のメッセージ -->
@@ -124,13 +124,14 @@
             {% endfor %}
               <!-- 送信フォーム -->
             </div>
+
             <form method="post" action="{% url 'message' %}" class="p-3 border-gray-top mt-auto ">
               {% csrf_token %}
 
               {% if login_user.id != message_room.user2.id  %}
-              <input type="hidden" name="user_id" value="{{ message_room.user1.id }}">
+                <input type="hidden" name="user_id" value="{{ message_room.user1.id }}">
               {% else %}
-              <input type="hidden" name="user_id" value="{{ message_room.user2.id }}">
+                <input type="hidden" name="user_id" value="{{ message_room.user2.id }}">
               {% endif %}
               <input type="hidden" name="room_id" value="{{ message_room.id }}">
               <div class="input-group">
