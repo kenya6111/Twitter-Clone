@@ -37,7 +37,6 @@
           </div>
           <!-- トークルーム -->
           {% for message_room in message_rooms %}
-
           <a href="{% url 'message' %}?user_id={{login_user.id}}&room_id={{message_room.id}}">
             <div class="d-flex flex-row py-2 border-gray-bottom tweet">
               <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
@@ -140,7 +139,6 @@
               </div>
             </form>
           {% endif %}
-        </div>
     </div>
 </div>
 {% endblock %}
