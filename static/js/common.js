@@ -213,6 +213,12 @@ function bookmark (loginUserId,TweetUserId){
   window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}`
 }
 
+function startMessage (loginUserId,TweetUserId){
+  event.stopPropagation();
+  event.preventDefault();
+  window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}`
+}
+
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
