@@ -213,10 +213,33 @@ function bookmark (loginUserId,TweetUserId){
   window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}`
 }
 
-function startMessage (loginUserId,TweetUserId){
+
+
+const makeMessageUrl = location.origin + "/make_message_room"
+async function startMessage (loginUserId,TweetUserId){
   event.stopPropagation();
   event.preventDefault();
-  window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}`
+  const csrftoken = getCookie("csrftoken");
+
+  const body = new URLSearchParams()
+  body.append('login_user_id', loginUserId)
+  body.append('tweet_user_id', TweetUserId)
+
+  await fetch(makeMessageUrl,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': csrftoken
+    },
+    body: body
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    window.location = location.origin + `/message?user_id=${loginUserId}&tweet_user_id=${TweetUserId}`
+  })
+  .catch(error => {
+    console.error(error);
+  });
 }
 
 function getCookie(name) {

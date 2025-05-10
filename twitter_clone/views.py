@@ -469,3 +469,19 @@ def message(request):
         messages = MessageModel.objects.filter(room=message_room)
     return render(request, 'twitter_clone/message.html', {"custom_user":custom_user,"message_rooms":message_rooms,"messages":messages, "message_room":message_room,"login_user":custom_user})
 
+
+def make_message_room_view(request):
+    if request.method == 'POST':
+        login_user_id = request.POST.get("login_user_id", None)
+        tweet_user_id = request.POST.get("tweet_user_id", None)
+        login_user = get_object_or_404(CustomUser,id=login_user_id)
+        tweet_user = get_object_or_404(CustomUser,id=tweet_user_id)
+
+
+        exist_record= MessageRoomModel.objects.filter(Q(user1=login_user, user2=tweet_user)|Q(user1=tweet_user, user2=login_user)).first()
+
+        if exist_record:
+            return JsonResponse({'is_registered': False})
+        else:
+            MessageRoomModel.objects.create(user1=login_user,user2=tweet_user)
+            return JsonResponse({'is_registered': True})
