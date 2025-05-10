@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db.models import Q
 from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel,MessageRoomModel,MessageModel
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
@@ -458,9 +459,8 @@ def message(request):
         return redirect(url)
 
     user_id = request.GET.get("user_id", None)
-    print("user_id",user_id)
     custom_user = CustomUser.objects.get(id=user_id)
-    message_rooms = MessageRoomModel.objects.filter(user1=custom_user)
+    message_rooms = MessageRoomModel.objects.filter(Q(user1=custom_user)|Q(user2=custom_user) )
     messages =""
     message_room=""
     if "room_id" in request.GET:
