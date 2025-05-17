@@ -547,4 +547,4 @@ def notice(request):
     user_id = request.GET.get("user_id", None)
     custom_user = CustomUser.objects.get(id=user_id)
     notifications = NotificationModel.objects.filter(receiver=custom_user)
-    return render(request, 'twitter_clone/notice.html', {"notifications":notifications})
+    return render(request, 'twitter_clone/notice.html', {"notifications":notifications,"login_user":custom_user})
