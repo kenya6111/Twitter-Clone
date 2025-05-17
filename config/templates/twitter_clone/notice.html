@@ -79,7 +79,7 @@
                   {% elif notice.action_flag == 'retweet' %}
                     <p class="text-white">{{ notice.sender.username }}さんがあなたのツイートをリツイートしました</p>
                   {% elif notice.action_flag == 'comment' %}
-                    <p>Replying to {{ notice.sender.username }}</p>
+                    <p>Replying to {{ notice.receiver.username }}</p>
                   {% endif %}
                 </div>
 
