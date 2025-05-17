@@ -14,5 +14,7 @@ urlpatterns = [
     path('like', views.like_view, name='like'),
     path('retweet', views.retweet_view, name='retweet'),
     path('follow', views.follow_unfollow, name='follow'),
-    path('bookmark', views.bookmark, name='bookmark')
+    path('bookmark', views.bookmark, name='bookmark'),
+    path('message', views.message, name='message'),
+    path('make_message_room', views.make_message_room_view, name='make_message_room'),
 ]
