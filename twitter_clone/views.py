@@ -449,8 +449,8 @@ def message(request):
         user_id = request.POST.get("user_id", None)
         room_id = request.POST.get("room_id", None)
         content = request.POST.get("content", None)
-        custom_user = get_object_or_404(CustomUser,id=user_id)
-        message_room = get_object_or_404(MessageRoomModel,id=room_id)
+        custom_user = get_object_or_404(CustomUser, id=user_id)
+        message_room = get_object_or_404(MessageRoomModel, id=room_id)
         if content:
             MessageModel.objects.create(room=message_room ,sender=custom_user,content=content)
         redirect_url = reverse('message')
@@ -460,14 +460,25 @@ def message(request):
 
     user_id = request.GET.get("user_id", None)
     custom_user = CustomUser.objects.get(id=user_id)
-    message_rooms = MessageRoomModel.objects.filter(Q(user1=custom_user)|Q(user2=custom_user) )
-    messages =""
+    message_rooms = MessageRoomModel.objects.filter(participants=custom_user)
+
+    rooms_with_others = []
+    for room in message_rooms:
+        other = room.participants.exclude(id=custom_user.id).first()
+        rooms_with_others.append({
+            'room': room,
+            'other_user': other
+        })
+
+    messages_data =""
     message_room=""
+    other_user=""
     if "room_id" in request.GET:
         room_id = request.GET.get("room_id")
         message_room = MessageRoomModel.objects.get(id=room_id)
-        messages = MessageModel.objects.filter(room=message_room)
-    return render(request, 'twitter_clone/message.html', {"custom_user":custom_user,"message_rooms":message_rooms,"messages":messages, "message_room":message_room,"login_user":custom_user})
+        messages_data = MessageModel.objects.filter(room=message_room)
+        other_user = message_room.participants.exclude(id=custom_user.id).first()
+    return render(request, 'twitter_clone/message.html', {"custom_user":custom_user,"message_rooms":message_rooms,"messages":messages_data, "message_room":message_room,"login_user":custom_user,"rooms_with_others":rooms_with_others,"other_user":other_user})
 
 
 def make_message_room_view(request):
@@ -477,11 +488,16 @@ def make_message_room_view(request):
         login_user = get_object_or_404(CustomUser,id=login_user_id)
         tweet_user = get_object_or_404(CustomUser,id=tweet_user_id)
 
-
-        exist_record= MessageRoomModel.objects.filter(Q(user1=login_user, user2=tweet_user)|Q(user1=tweet_user, user2=login_user)).first()
+        exist_record= (
+            MessageRoomModel.objects
+            .filter(participants=login_user)
+            .filter(participants=tweet_user)
+            .first()
+        )
 
         if exist_record:
             return JsonResponse({'is_registered': False,'room_id': exist_record.id})
         else:
-            room = MessageRoomModel.objects.create(user1=login_user,user2=tweet_user)
+            room = MessageRoomModel.objects.create()
+            room.participants.set([login_user, tweet_user])
             return JsonResponse({'is_registered': True, 'room_id': room.id})

@@ -125,17 +125,13 @@ class BookmarkModel(BaseModel):
         ]
 
 class MessageRoomModel(BaseModel):
-    user1 = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='rooms_user1')
-    user2 = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='rooms_user2')
+    participants = models.ManyToManyField(
+        CustomUser,
+        related_name='message_rooms',
+        symmetrical=False,   # A↔B を同じペアとみなすなら True でも可
+    )
     class Meta:
         db_table = "message_rooms"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user1", "user2"],
-                name="room_unique",
-                condition=Q(user1__lt=F('user2')),
-            ),
-        ]
 
 class MessageModel(BaseModel):
     room = models.ForeignKey(MessageRoomModel, on_delete=models.CASCADE, related_name='messages')
