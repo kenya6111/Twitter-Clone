@@ -42,7 +42,7 @@
         </div>
 
         {% for notice in notifications %}
-          <a href="{% url 'tweet_detail' %}?tweet_id={{article.id}}" class="position-relative">
+          <a href="{% url 'tweet_detail' %}?tweet_id={{notice.notice_target.id}}" class="position-relative">
             <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
               <!-- アイコン（いいねならハート、リツイートならリツイートマーク、コメントならアイコン画像） -->
               <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
