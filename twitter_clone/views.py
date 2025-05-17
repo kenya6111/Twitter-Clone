@@ -3,12 +3,9 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.mail import send_mail
-<<<<<<< HEAD
+
 from django.db.models import Q
-from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel,MessageRoomModel,MessageModel
-=======
 from twitter_clone.models import CustomUser, TweetModel,ReplyModel,LikeModel,RetweetModel,FollowModel,BookmarkModel,MessageRoomModel,MessageModel,NotificationModel
->>>>>>> bc34c41 (通知機能実装)
 from django.core.exceptions import ObjectDoesNotExist
 import secrets
 from django.contrib.auth.hashers import make_password,check_password
@@ -545,6 +542,7 @@ def make_message_room_view(request):
             room = MessageRoomModel.objects.create()
             room.participants.set([login_user, tweet_user])
             return JsonResponse({'is_registered': True, 'room_id': room.id})
+
 def notice(request):
     user_id = request.GET.get("user_id", None)
     custom_user = CustomUser.objects.get(id=user_id)
