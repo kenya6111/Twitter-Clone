@@ -357,7 +357,12 @@ def tweet_detail_view(request):
         ReplyModel.objects.create(user=tweet.user, origin_tweet=tweet, reply_tweet=reply_tweet)
 
         if tweet.user.id != int(user.id):
-            NotificationModel.objects.create(sender=login_user,receiver=tweet.user,action_flag="comment",notice_target=reply_tweet)
+            # NotificationModel.objects.create(sender=login_user,receiver=tweet.user,action_type="comment",related_tweet=reply_tweet)
+            login_user.sent_notifications.create(
+                receiver = tweet.user,
+                action_type = NotificationModel.ActionType.COMMENT,
+                related_tweet = reply_tweet
+            )
             send_notification_email(login_user,tweet.user,"comment")
 
         url = reverse('tweet_detail')
@@ -409,7 +414,7 @@ def like_view(request):
             LikeModel.objects.create(user=custom_user, tweet=tweet)
             if tweet.user.id != int(user_id):
                 # notificationModeへの追加とメール送信
-                NotificationModel.objects.create(sender=custom_user,receiver=tweet.user,action_flag="like",notice_target=tweet)
+                NotificationModel.objects.create(sender=custom_user,receiver=tweet.user,action_type="like",related_tweet=tweet)
                 send_notification_email(custom_user,tweet.user,"like")
             return JsonResponse({'is_registered': True})
 
@@ -434,7 +439,7 @@ def retweet_view(request):
             TweetModel.objects.create(user=custom_user,is_retweet=True,retweet=tweet)
 
             if tweet.user.id != int(user_id):
-                NotificationModel.objects.create(sender=custom_user,receiver=tweet.user,action_flag="retweet",notice_target=tweet)
+                NotificationModel.objects.create(sender=custom_user,receiver=tweet.user,action_type="retweet",related_tweet=tweet)
                 send_notification_email(custom_user,tweet.user,"retweet")
             return JsonResponse({'is_registered': True})
 
@@ -546,5 +551,6 @@ def make_message_room_view(request):
 def notice(request):
     user_id = request.GET.get("user_id", None)
     custom_user = CustomUser.objects.get(id=user_id)
-    notifications = NotificationModel.objects.filter(receiver=custom_user)
+    # notifications = NotificationModel.objects.filter(receiver=custom_user)
+    notifications = custom_user.received_notifications.all()
     return render(request, 'twitter_clone/notice.html', {"notifications":notifications,"login_user":custom_user})

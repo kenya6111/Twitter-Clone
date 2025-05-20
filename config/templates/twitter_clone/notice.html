@@ -42,60 +42,60 @@
         </div>
 
         {% for notice in notifications %}
-          <a href="{% url 'tweet_detail' %}?tweet_id={{notice.notice_target.id}}" class="position-relative">
+          <a href="{% url 'tweet_detail' %}?tweet_id={{notice.related_tweet.id}}" class="position-relative">
             <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
               <!-- アイコン（いいねならハート、リツイートならリツイートマーク、コメントならアイコン画像） -->
               <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
-                {% if notice.action_flag == 'like' %}
+                {% if notice.action_type == 'like' %}
                   <i class="bi-heart fs-3" style="color:red;"></i>
-                {% elif notice.action_flag == 'retweet' %}
+                {% elif notice.action_type == 'retweet' %}
                   <i class="bi-arrow-repeat fs-3" style="color:green;"></i>
-                {% elif notice.action_flag == 'comment' %}
-                  <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.user.id}}',event)">
-                      {% cloudinary notice.sender.image.name class="rounded-circle w-100 h-100" %}
-                  </span>
+                {% elif notice.action_type == 'comment' %}
+                <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.id}}',event)">
+                    {% cloudinary notice.sender.image.name class="rounded-circle w-100 h-100" %}
+                </span>
                 {% endif %}
               </div>
 
               <div class="w-90 h-75 pe-4">
                 <!-- senderのプロフィール画像 -->
                 <div>
-                  {% if notice.action_flag == 'like' %}
-                    <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.user.id}}',event)">
+                  {% if notice.action_type == 'like' %}
+                    <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.id}}',event)">
                       {% cloudinary notice.sender.image.name class="rounded-circle w-8 h-8" %}
                     </span>
-                  {% elif notice.action_flag == 'retweet' %}
-                    <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.user.id}}',event)">
+                  {% elif notice.action_type == 'retweet' %}
+                    <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.id}}',event)">
                       {% cloudinary notice.sender.image.name class="rounded-circle w-8 h-8" %}
                     </span>
-                  {% elif notice.action_flag == 'comment' %}
+                  {% elif notice.action_type == 'comment' %}
                     <p class="text-white">{{ notice.sender.username}}</p>
                   {% endif %}
                 </div>
                 <!-- senderのユーザ名＋「いいねしました」「リツイートしました」などの文言 -->
                 <div>
-                  {% if notice.action_flag == 'like' %}
+                  {% if notice.action_type == 'like' %}
                     <p class="text-white">{{ notice.sender.username }}さんがあなたのツイートをいいねしました</p>
-                  {% elif notice.action_flag == 'retweet' %}
+                  {% elif notice.action_type == 'retweet' %}
                     <p class="text-white">{{ notice.sender.username }}さんがあなたのツイートをリツイートしました</p>
-                  {% elif notice.action_flag == 'comment' %}
+                  {% elif notice.action_type == 'comment' %}
                     <p>Replying to {{ notice.receiver.username }}</p>
                   {% endif %}
                 </div>
 
-                {% if notice.action_flag == 'comment' %}
+                {% if notice.action_type == 'comment' %}
                   <div class="text-white fs-5 ">
-                    {% if notice.notice_target.sentense %}
-                      <p class="" style="overflow-wrap: break-word;">{{notice.notice_target.sentense}}</p>
+                    {% if notice.related_tweet.sentense %}
+                      <p class="" style="overflow-wrap: break-word;">{{notice.related_tweet.sentense}}</p>
                     {% endif %}
                   </div>
-                  {% if notice.notice_target.image %}
+                  {% if notice.related_tweet.image %}
                     <div>
-                      {% cloudinary notice.notice_target.image.name width=300 height=300 %}
+                      {% cloudinary notice.related_tweet.image.name width=300 height=300 %}
                     </div>
                   {% endif %}
                 {% endif %}
-                {% if notice.action_flag == 'comment' %}
+                {% if notice.action_type == 'comment' %}
                   <div class="color-gray fs-6 d-flex justify-content-between py-2">
                     <i class="bi-chat"></i>
                     {% if article.id in retweet_article_ids %}
