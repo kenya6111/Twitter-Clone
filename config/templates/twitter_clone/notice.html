@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load cloudinary %}
+
+{% block title %}アカウント作成{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% sass_src 'css/main.scss' %}" />
+<style>
+  .w-8{
+    width:8%;
+  }
+  .h-8{
+    height:8%;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}
+    </div>
+{% endfor %}
+{% endif %}
+<div class="w-100 h-100 bg-top-parent">
+    <!-- ヘッダー -->
+        {% include 'components/header.html' %}
+    <!-- メインコンテンツ -->
+    <div class="row menu-container">
+      <!-- サイドバー -->
+      {% include 'components/sidebar.html' %}
+      <!-- センターバー -->
+      <div class="col-4 border-gray-side">
+        <!-- タイトル ＋ 戻るボタン -->
+        <div class="fs-5 d-flex justify-content-start align-items-start pt-3 ps-3 ">
+            <a href="{% url 'main' %}">
+                <i class="bi-arrow-left"></i>
+            </a>
+            <p class="ms-2 text-white">通知</p>
+        </div>
+
+        {% for notice in notifications %}
+          <a href="{% url 'tweet_detail' %}?tweet_id={{notice.related_tweet.id}}" class="position-relative">
+            <div class="d-flex flex-row pt-2 border-gray-bottom tweet">
+              <!-- アイコン（いいねならハート、リツイートならリツイートマーク、コメントならアイコン画像） -->
+              <div class="w-7 d-flex justify-content-center align-items-start mt-1 mx-3">
+                {% if notice.action_type == 'like' %}
+                  <i class="bi-heart fs-3" style="color:red;"></i>
+                {% elif notice.action_type == 'retweet' %}
+                  <i class="bi-arrow-repeat fs-3" style="color:green;"></i>
+                {% elif notice.action_type == 'comment' %}
+                <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.id}}',event)">
+                    {% cloudinary notice.sender.image.name class="rounded-circle w-100 h-100" %}
+                </span>
+                {% endif %}
+              </div>
+
+              <div class="w-90 h-75 pe-4">
+                <!-- senderのプロフィール画像 -->
+                <div>
+                  {% if notice.action_type == 'like' %}
+                    <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.id}}',event)">
+                      {% cloudinary notice.sender.image.name class="rounded-circle w-8 h-8" %}
+                    </span>
+                  {% elif notice.action_type == 'retweet' %}
+                    <span onClick="moveToProfile('{% url 'profile' %}?user_id={{notice.sender.id}}',event)">
+                      {% cloudinary notice.sender.image.name class="rounded-circle w-8 h-8" %}
+                    </span>
+                  {% elif notice.action_type == 'comment' %}
+                    <p class="text-white">{{ notice.sender.username}}</p>
+                  {% endif %}
+                </div>
+                <!-- senderのユーザ名＋「いいねしました」「リツイートしました」などの文言 -->
+                <div>
+                  {% if notice.action_type == 'like' %}
+                    <p class="text-white">{{ notice.sender.username }}さんがあなたのツイートをいいねしました</p>
+                  {% elif notice.action_type == 'retweet' %}
+                    <p class="text-white">{{ notice.sender.username }}さんがあなたのツイートをリツイートしました</p>
+                  {% elif notice.action_type == 'comment' %}
+                    <p>Replying to {{ notice.receiver.username }}</p>
+                  {% endif %}
+                </div>
+
+                {% if notice.action_type == 'comment' %}
+                  <div class="text-white fs-5 ">
+                    {% if notice.related_tweet.sentense %}
+                      <p class="" style="overflow-wrap: break-word;">{{notice.related_tweet.sentense}}</p>
+                    {% endif %}
+                  </div>
+                  {% if notice.related_tweet.image %}
+                    <div>
+                      {% cloudinary notice.related_tweet.image.name width=300 height=300 %}
+                    </div>
+                  {% endif %}
+                {% endif %}
+                {% if notice.action_type == 'comment' %}
+                  <div class="color-gray fs-6 d-flex justify-content-between py-2">
+                    <i class="bi-chat"></i>
+                    {% if article.id in retweet_article_ids %}
+                    <i class="bi-arrow-repeat" style="color:green;" onclick="retweet(event, {{ article.id }}, 'main',{{login_user.id}}, null )">{{article.retweets_count}}</i>
+                    {% else %}
+                    <i class="bi-arrow-repeat" onclick="retweet(event, {{ article.id }}, 'main',{{login_user.id}}, null )">{{article.retweets_count}}</i>
+                    {% endif %}
+                    {% if article.id in liked_article_ids %}
+                    <i class="bi-heart" style="color:red;" onclick="disLike(event, {{ article.id }}, 'main',{{login_user.id}}, null )"><span class="ms-1">{{article.likes_count}}</span></i>
+                    {% else %}
+                    <i class="bi-heart" onclick="like(event,{{article.id}},'main',{{login_user.id}}, null)"><span class="ms-1">{{article.likes_count}}</span></i>
+                    {% endif %}
+                    <i class="bi-bar-chart"></i>
+                    {% if article.id in bookmark_article_ids %}
+                    <i class="bi-bookmark" style="color:rgb(39, 176, 255);" onclick="bookmark({{ article.id }},{{login_user.id}} )"></i>
+                    {% else %}
+                    <i class="bi-bookmark" onclick="bookmark({{ article.id }},{{login_user.id}} )"></i>
+                    {% endif %}
+                    <i class="bi-arrow-bar-up"></i>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+          {% endfor %}
+          <nav aria-label="..." class="mt-3">
+            <ul class="pagination d-flex justify-content-center">
+              {% if articles.has_previous %}
+              <li class="page-item">
+                      <!-- 前のページへのリンク -->
+                      <a href="?p={{ articles.previous_page_number }}" class="page-link">前へ</a>
+                  </li>
+              {% endif %}
+
+              {% for article in articles.paginator.page_range %}
+                  <li class="page-item">
+                      <a class="page-link" href="?p={{ forloop.counter }}">{{forloop.counter}}</a>
+                  </li>
+              {% endfor %}
+
+              <!-- 次のページへのリンク -->
+              {% if articles.has_next %}
+                  <li class="page-item">
+                      <a href="?p={{ articles.next_page_number }}" class="page-link">次へ</a>
+                  </li>
+              {% endif %}
+            </ul>
+        </nav>
+        <!-- サイドバー（右） -->
+        <div class="col-4">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}

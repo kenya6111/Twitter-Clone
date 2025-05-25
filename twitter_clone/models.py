@@ -140,3 +140,18 @@ class MessageModel(BaseModel):
 
     class Meta:
         db_table = "messages"
+
+class NotificationModel(BaseModel):
+    class ActionType(models.TextChoices):
+        LIKE     = "like",     "Like"
+        RETWEET  = "retweet",  "Retweet"
+        COMMENT  = "comment",  "Comment"
+
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='sent_notifications')
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='received_notifications')
+    action_type = models.CharField(default="",choices=ActionType.choices,max_length=8)
+    related_tweet = models.ForeignKey('TweetModel', on_delete=models.CASCADE, null=True, blank=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "notifications"
