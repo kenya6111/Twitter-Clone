@@ -1,0 +1,39 @@
+[
+  {
+    "model": "twitter_clone.customuser",
+    "pk": 1,
+    "fields": {
+      "username": "myuser",
+      "password": "pbkdf2_sha256$260000$TJ9pAsI8lciR02L$Uu+xtfJaDBfyeoKRHUBE9PjbjomGWoQ+ZTIHYLEALgQ=",
+      "email": "myuser@example.com",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "first_name": "",
+      "last_name": "",
+      "last_login": null,
+      "date_joined": "2025-01-01T00:00:00Z",
+
+      "tel": null,
+      "date_of_birth": null,
+      "image": null,
+      "introduction": null,
+      "head_image": null,
+      "place": null,
+      "web_site": null,
+
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+   {
+    "model": "account.emailaddress",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "email": "myuser@example.com",
+      "verified": true,
+      "primary": true
+    }
+  }
+]
