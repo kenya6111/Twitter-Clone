@@ -395,6 +395,10 @@ def tweet_view(request):
             uploaded_tweet_image = upload(request.FILES.get('tweet-image'))
             tweet_image = uploaded_tweet_image['secure_url']
 
+        if not tweet_sentence and not tweet_image:
+            messages.error(request, "テキストか画像のどちらかを入力してください。")
+            return redirect("main")
+
         TweetModel.objects.create(user=custom_user, sentense=tweet_sentence, image=tweet_image)
     return redirect('main')
 

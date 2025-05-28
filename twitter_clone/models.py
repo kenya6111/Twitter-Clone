@@ -25,12 +25,12 @@ class CustomUser(AbstractUser):
     place = models.TextField(max_length=500,blank=True, null=True)
     web_site = models.CharField(max_length=100,blank=True, null=True)
 
-    @classmethod
+    @staticmethod
     def is_valid_email(email):
         regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return bool(re.match(regex, email))
 
-    @classmethod
+    @staticmethod
     def is_valid_phone_number(phone_number):
         phone_number_pattern = r"^0[789]0\d{8}$"
         return bool(re.match(phone_number_pattern, phone_number))
